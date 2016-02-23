@@ -7,6 +7,7 @@ public:
     static void create();
     static void destroy();
     static TheTime instance();
+    static bool did_create();
 
 private:
     TheTime();

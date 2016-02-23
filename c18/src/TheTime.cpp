@@ -49,6 +49,8 @@ TheTime::~TheTime() {}
 
 TheTime TheTime::instance() { return TheTime(); }
 
+bool TheTime::did_create() { return !!g_impl; }
+
 void TheTime::create()
 {
     ASSERT(!g_impl);

@@ -17,7 +17,6 @@ namespace GameLib
 const double NearClip   = 0.5;
 const double FarClip    = 1000.0;
 
-bool does_the_time_exist = false;
 View* g_view = 0;
 Robo* g_robo = 0;
 Robo* g_opponent = 0;
@@ -26,10 +25,9 @@ void Framework::update()
 {
     // make sure globals are
     {
-        if (!does_the_time_exist)
+        if (!TheTime::did_create())
         {
             TheTime::create();
-            does_the_time_exist = true;
         }
 
         if (!TheHorizon::did_create())
@@ -152,8 +150,6 @@ void Framework::update()
     if (keyboard.isTriggered('R'))
     {
         TheTime::destroy();
-        does_the_time_exist = false;
-
         TheHorizon::destroy();
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
@@ -168,9 +164,7 @@ void Framework::update()
     if (isEndRequested())
     {
         TheTime::destroy();
-        does_the_time_exist = false;
         TheHorizon::destroy();
-
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);
