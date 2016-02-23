@@ -39,8 +39,6 @@ void Framework::update()
         if (!TheDatabase::did_create())
         {
             TheDatabase::create();
-            TheDatabase::instance().create("myrobo", "robo");
-            TheDatabase::instance().create("opponent", "robo");
         }
 
         if (!g_view)
@@ -50,14 +48,15 @@ void Framework::update()
 
         if (!g_robo)
         {
-            g_robo = new Robo();
+            g_robo = new Robo("myrobo");
+            g_robo->warp(Vector3(0.0, 1.2, -1.0));
             g_robo->rotate_zx(180 * 3);
         }
 
         if (!g_opponent)
         {
-            g_opponent = new Robo();
-            g_opponent->warp(Vector3(0.0, 0.0, -20));
+            g_opponent = new Robo("opponent");
+            g_opponent->warp(Vector3(0.0, 1.0, -20));
         }
     }
 
