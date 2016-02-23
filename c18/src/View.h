@@ -25,7 +25,6 @@ public:
     void increase_angle_of_view(int a);
     Matrix44 get_perspective_matrix() const;
     void rotate(const Vector3& diff);
-    void transform(Vector3* vertex) const;
 };
 
 #endif

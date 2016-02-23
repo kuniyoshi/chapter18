@@ -97,11 +97,3 @@ void View::rotate(const Vector3& diff)
     angle.multiply(static_cast< double >(delta));
     delta_angle_.add(angle);
 }
-
-void View::transform(Vector3* vertex) const
-{
-    Matrix44 view(camera_.get_perspective_matrix());
-
-    // make world coordinate be clip coordinate
-    view.multiply(vertex);
-}
