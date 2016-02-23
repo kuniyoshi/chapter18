@@ -4,6 +4,7 @@
 #include "GameLib/Input/Manager.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Robo.h"
+#include "TheDatabase.h"
 #include "TheHorizon.h"
 #include "TheTime.h"
 #include "View.h"
@@ -33,6 +34,13 @@ void Framework::update()
         if (!TheHorizon::did_create())
         {
             TheHorizon::create();
+        }
+
+        if (!TheDatabase::did_create())
+        {
+            TheDatabase::create();
+            TheDatabase::instance().create("myrobo", "robo");
+            TheDatabase::instance().create("opponent", "robo");
         }
 
         if (!g_view)
@@ -151,6 +159,7 @@ void Framework::update()
     {
         TheTime::destroy();
         TheHorizon::destroy();
+        TheDatabase::destroy();
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);
@@ -165,6 +174,7 @@ void Framework::update()
     {
         TheTime::destroy();
         TheHorizon::destroy();
+        TheDatabase::destroy();
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);
