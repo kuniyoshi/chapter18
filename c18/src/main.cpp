@@ -18,7 +18,6 @@ const double NearClip   = 0.5;
 const double FarClip    = 1000.0;
 
 bool does_the_time_exist = false;
-TheHorizon* g_the_horizon = 0;
 View* g_view = 0;
 Robo* g_robo = 0;
 Robo* g_opponent = 0;
@@ -33,9 +32,9 @@ void Framework::update()
             does_the_time_exist = true;
         }
 
-        if (!g_the_horizon)
+        if (!TheHorizon::did_create())
         {
-            g_the_horizon = new TheHorizon();
+            TheHorizon::create();
         }
 
         if (!g_view)
@@ -143,7 +142,7 @@ void Framework::update()
 
     g_robo->draw(*g_view);
     g_opponent->draw(*g_view);
-    g_the_horizon->draw(*g_view);
+    TheHorizon::instance().draw(*g_view);
 
     ostringstream oss;
     oss << frameRate();
@@ -155,7 +154,7 @@ void Framework::update()
         TheTime::destroy();
         does_the_time_exist = false;
 
-        SAFE_DELETE(g_the_horizon);
+        TheHorizon::destroy();
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);
@@ -170,8 +169,8 @@ void Framework::update()
     {
         TheTime::destroy();
         does_the_time_exist = false;
+        TheHorizon::destroy();
 
-        SAFE_DELETE(g_the_horizon);
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);

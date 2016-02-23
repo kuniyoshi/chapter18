@@ -18,14 +18,32 @@ const unsigned SkyColor     = 0xff101010;
 
 } // namespace -
 
-TheHorizon::TheHorizon()
-: texture_(0), height_(0.0)
+namespace
+{
+
+class Impl
+{
+private:
+    GameLib::Texture* texture_;
+    double height_;
+    Vector3 uv_vertexes_[4];
+    Vector3 vertexes_[4];
+
+public:
+    Impl();
+    ~Impl();
+    void draw(const View& view);
+};
+
+Impl::Impl()
+:   texture_(0), height_(0.0),
+    uv_vertexes_(), vertexes_()
 {
     GameLib::Framework f = GameLib::Framework::instance();
     f.createTexture(&texture_, "data/image/stage.tga");
 }
 
-TheHorizon::~TheHorizon()
+Impl::~Impl()
 {
     GameLib::Framework f = GameLib::Framework::instance();
     f.destroyTexture(&texture_);
@@ -132,7 +150,7 @@ void set_uv_vertexes_to_the_horizon(Vector3* vertexes)
 
 } // namespace -
 
-void TheHorizon::draw(const View& view)
+void Impl::draw(const View& view)
 {
     GameLib::Framework f = GameLib::Framework::instance();
     f.setTexture(texture_);
@@ -209,3 +227,32 @@ void TheHorizon::draw(const View& view)
                         SkyColor,
                         near_color);
 }
+
+Impl* g_impl = 0;
+
+} // namespace -
+
+void TheHorizon::create()
+{
+    ASSERT(!g_impl);
+    g_impl = new Impl();
+}
+
+void TheHorizon::destroy()
+{
+    ASSERT(g_impl);
+    SAFE_DELETE(g_impl);
+}
+
+TheHorizon TheHorizon::instance()
+{
+    return TheHorizon();
+}
+
+bool TheHorizon::did_create() { return !!g_impl; }
+
+TheHorizon::TheHorizon() {}
+
+TheHorizon::~TheHorizon() {}
+
+void TheHorizon::draw(const View& view) { g_impl->draw(view); }
