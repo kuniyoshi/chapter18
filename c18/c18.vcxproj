@@ -165,7 +165,6 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Matrix44.cpp" />
     <ClCompile Include="src\Robo.cpp" />
-    <ClCompile Include="src\Sample.cpp" />
     <ClCompile Include="src\TheHorizon.cpp" />
     <ClCompile Include="src\TheTime.cpp" />
     <ClCompile Include="src\Vector3.cpp" />
@@ -174,7 +173,6 @@
   <ItemGroup>
     <ClInclude Include="src\Matrix44.h" />
     <ClInclude Include="src\Robo.h" />
-    <ClInclude Include="src\Sample.h" />
     <ClInclude Include="src\TheHorizon.h" />
     <ClInclude Include="src\TheTime.h" />
     <ClInclude Include="src\Vector3.h" />
