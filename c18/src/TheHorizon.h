@@ -1,5 +1,5 @@
-#ifndef ROBOF_THE_HORIZON_H_
-#define ROBOF_THE_HORIZON_H_
+#ifndef ROBOF__THE_HORIZON_H_
+#define ROBOF__THE_HORIZON_H_
 
 class View;
 

@@ -1,5 +1,5 @@
-#ifndef ROBOF_THE_TIME_H_
-#define ROBOF_THE_TIME_H_
+#ifndef ROBOF__THE_TIME_H_
+#define ROBOF__THE_TIME_H_
 
 class TheTime
 {

@@ -1,5 +1,5 @@
-#ifndef ROBOF_VIEW_H_
-#define ROBOF_VIEW_H_
+#ifndef ROBOF__VIEW_H_
+#define ROBOF__VIEW_H_
 #include "GraphicsDatabase/Camera.h"
 #include "GraphicsDatabase/Vector3.h"
 

@@ -1,5 +1,5 @@
-#ifndef ROBOF_ROBO_H_
-#define ROBOF_ROBO_H_
+#ifndef ROBOF__ROBO_H_
+#define ROBOF__ROBO_H_
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Vector3.h"
 
