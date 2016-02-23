@@ -19,7 +19,6 @@ public:
     void rate(double new_value) const;
     unsigned delta() const;
     void tick() const;
-
 };
 
 #endif

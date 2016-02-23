@@ -2,9 +2,12 @@
 #include <cmath>
 #include <sstream>
 #include "GameLib/Framework.h"
-#include "Matrix44.h"
+#include "GraphicsDatabase/Matrix44.h"
+#include "GraphicsDatabase/Vector3.h"
 #include "Robo.h"
-#include "Vector3.h"
+
+using GraphicsDatabase::Matrix44;
+using GraphicsDatabase::Vector3;
 
 namespace
 {

@@ -1,10 +1,13 @@
 #ifndef ROBOF_ROBO_H_
 #define ROBOF_ROBO_H_
-#include "Matrix44.h"
-#include "Vector3.h"
+#include "GraphicsDatabase/Matrix44.h"
+#include "GraphicsDatabase/Vector3.h"
 
-class View;
+using GraphicsDatabase::Matrix44;
+using GraphicsDatabase::Vector3;
+
 namespace GameLib { class Texture; }
+class View;
 
 class Robo
 {

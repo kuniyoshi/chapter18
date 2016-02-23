@@ -1,9 +1,11 @@
 #ifndef ROBOF_THE_HORIZON_H_
 #define ROBOF_THE_HORIZON_H_
-#include "Vector3.h"
+#include "GraphicsDatabase/Vector3.h"
 
-class View;
+using GraphicsDatabase::Vector3;
+
 namespace GameLib { class Texture; }
+class View;
 
 class TheHorizon
 {

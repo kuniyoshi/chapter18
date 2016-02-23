@@ -2,10 +2,13 @@
 #include <sstream>
 #include "GameLib/Framework.h"
 #include "GameLib/Math.h"
-#include "Matrix44.h"
+#include "GraphicsDatabase/Matrix44.h"
+#include "GraphicsDatabase/Vector3.h"
 #include "TheTime.h"
-#include "Vector3.h"
 #include "View.h"
+
+using GraphicsDatabase::Matrix44;
+using GraphicsDatabase::Vector3;
 
 namespace
 {

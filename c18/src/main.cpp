@@ -2,13 +2,14 @@
 #include "GameLib/Framework.h"
 #include "GameLib/Input/Keyboard.h"
 #include "GameLib/Input/Manager.h"
+#include "GraphicsDatabase/Vector3.h"
 #include "Robo.h"
 #include "TheHorizon.h"
 #include "TheTime.h"
-#include "Vector3.h"
 #include "View.h"
 
 using namespace std;
+using GraphicsDatabase::Vector3;
 
 namespace GameLib
 {

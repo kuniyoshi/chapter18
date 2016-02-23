@@ -1,9 +1,12 @@
 #ifndef ROBOF_VIEW_H_
 #define ROBOF_VIEW_H_
-#include "Vector3.h"
+#include "GraphicsDatabase/Vector3.h"
 
-class Matrix44;
+namespace GraphicsDatabase { class Matrix44; }
 class Robo;
+
+using GraphicsDatabase::Matrix44;
+using GraphicsDatabase::Vector3;
 
 class View
 {
