@@ -14,7 +14,7 @@ using GraphicsDatabase::Vector3;
 namespace
 {
 
-const Vector3 FollowPoint(0.0, 1.2, -0.9);
+const Vector3 FollowPoint(0.0, 1.2, -1.2);
 const Vector3 FirstPosition(0.0, 1.6, 0.0);
 const Vector3 FirstAngle(0.0, 180.0, 0.0);
 const Vector3 AnglePerUs(0.1, 0.1, 0.1);
@@ -61,7 +61,7 @@ void View::follow(const Robo& robo)
 
     Vector3 current(camera_.position());
 
-    Vector3 diff(robo.center());
+    Vector3 diff(*(robo.center()));
     diff.add(follow_point);
     diff.subtract(current);
     diff.multiply(0.4); // follow rate
