@@ -59,7 +59,7 @@ void View::follow(const Robo& robo)
     transform.rotate_zx(robo.angle_zx());
     transform.multiply(&follow_point);
 
-    Vector3 current(camera_.position());
+    Vector3 current(*(camera_.position()));
 
     Vector3 diff(*(robo.center()));
     diff.add(follow_point);
