@@ -2,9 +2,11 @@
 #include <cmath>
 #include <sstream>
 #include "GameLib/Framework.h"
+#include "GraphicsDatabase/Camera.h"
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Robo.h"
+#include "TheTime.h"
 
 using GraphicsDatabase::Matrix44;
 using GraphicsDatabase::Vector3;
@@ -13,66 +15,39 @@ namespace
 {
 
 const Vector3 FollowPoint(0.0, 1.2, -0.9);
-const double FirstPositionX = 0.0;
-const double FirstPositionY = 1.6;
-const double FirstPositionZ = 0.0;
-const int AngleScale = 3;
+const Vector3 FirstPosition(0.0, 1.6, 0.0);
+const Vector3 FirstAngle(0.0, 180.0, 0.0);
+const Vector3 AnglePerUs(0.1, 0.1, 0.1);
+const double AngleOfView        = 90.0;
+const double AngleOfViewPerUs   = 0.10;
 
 } // namespace -
 
 View::View(int width, int height, double near_clip, double far_clip)
-:   near_clip_(near_clip), far_clip_(far_clip),
-    width_(width), height_(height),
-    angle_yz_(0.0), angle_zx_(0.0),
-    angle_of_view_(90.0), delta_angle_zx_(0.0),
-    position_(FirstPositionX, FirstPositionY, FirstPositionZ)
-{}
+:   camera_(),
+    delta_angle_(0.0, 0.0, 0.0)
+{
+    camera_.near_clip(near_clip);
+    camera_.far_clip(far_clip);
+    camera_.width(width);
+    camera_.height(height);
+    camera_.angle_of_view(AngleOfView);
+    camera_.angle(FirstAngle);
+    camera_.position(FirstPosition);
+}
 
 View::~View() {}
 
-double View::near_clip() const { return near_clip_; }
+double View::near_clip() const { return camera_.near_clip(); }
 
-double View::far_clip() const { return far_clip_; }
+double View::far_clip() const { return camera_.far_clip(); }
 
 void View::decrease_angle_of_view(int a)
 {
-    angle_of_view_ = angle_of_view_ - static_cast< double >(a) / AngleScale;
-}
-
-void View::draw_debug(int row) const
-{
-    std::ostringstream oss;
-    oss << "{";
-    oss << angle_zx_;
-    // oss << position_.x;
-    // oss << ", ";
-    // oss << position_.y;
-    // oss << ", ";
-    // oss << position_.z;
-    oss << "}";
-
-    GameLib::Framework f = GameLib::Framework::instance();
-    f.drawDebugString(0, row, oss.str().c_str());
-    oss.str("");
-}
-
-void View::draw_debug_string(const double* vertex, int row) const
-{
-    std::ostringstream oss;
-    oss << "{";
-
-    for (int i = 0; i < 3; ++i)
-    {
-        oss << vertex[i];
-        oss << ", ";
-    }
-
-    oss << vertex[3];
-    oss << "}";
-
-    GameLib::Framework f = GameLib::Framework::instance();
-    f.drawDebugString(0, row, oss.str().c_str());
-    oss.str("");
+    unsigned delta = TheTime::instance().delta();
+    double angle_of_view
+    = camera_.angle_of_view() - static_cast< double >(delta) * AngleOfViewPerUs;
+    camera_.angle_of_view(angle_of_view);
 }
 
 void View::follow(const Robo& robo)
@@ -84,46 +59,49 @@ void View::follow(const Robo& robo)
     transform.rotate_zx(robo.angle_zx());
     transform.multiply(&follow_point);
 
+    Vector3 current(camera_.position());
+
     Vector3 diff(robo.center());
     diff.add(follow_point);
-    diff.subtract(position_);
+    diff.subtract(current);
     diff.multiply(0.4); // follow rate
 
-    position_.add(diff);
+    current.add(diff);
+    camera_.position(current);
 
     // follow angle
-    angle_zx_ = -robo.angle_zx() + 180.0;
+    Vector3 angle;
+    angle.y = -robo.angle_zx() + 180.0;
+    angle.add(delta_angle_);
+    camera_.angle(angle);
 }
 
 Matrix44 View::get_perspective_matrix() const
 {
-    Matrix44 perspective;
-    perspective.translate(-position_);
-    perspective.rotate_zx(angle_zx_ + delta_angle_zx_);
-    perspective.rotate_yz(angle_yz_);
-    perspective.perspective(    angle_of_view_,
-                                width_,
-                                height_,
-                                near_clip_,
-                                far_clip_);
-    return perspective;
+    return camera_.get_perspective_matrix();
 }
 
 void View::increase_angle_of_view(int a)
 {
-    angle_of_view_ = angle_of_view_ + static_cast< double >(a) / AngleScale;
+    unsigned delta = TheTime::instance().delta();
+    double angle_of_view
+    = camera_.angle_of_view() + static_cast< double >(delta) * AngleOfViewPerUs;
+    camera_.angle_of_view(angle_of_view);
 }
 
 void View::rotate(const Vector3& diff)
 {
-    delta_angle_zx_ = delta_angle_zx_ + diff.x / static_cast< double >(AngleScale);
-    angle_yz_ = angle_yz_ + diff.y;
+    Vector3 angle(diff);
+    unsigned delta = TheTime::instance().delta();
+    angle.hadamard_product(AnglePerUs);
+    angle.multiply(static_cast< double >(delta));
+    delta_angle_.add(angle);
 }
 
 void View::transform(Vector3* vertex) const
 {
-    Matrix44 view(get_perspective_matrix());
+    Matrix44 view(camera_.get_perspective_matrix());
 
-    // make coordinate be clip
+    // make world coordinate be clip coordinate
     view.multiply(vertex);
 }

@@ -106,19 +106,19 @@ void Framework::update()
 
     if (keyboard.isOn('H'))
     {
-        angle_diff.add(Vector3(+1.0, 0.0, 0.0));
+        angle_diff.add(Vector3(0.0, -1.0, 0.0));
     }
     if (keyboard.isOn('J'))
     {
-        angle_diff.add(Vector3(0.0, -1.0, 0.0));
+        angle_diff.add(Vector3(-1.0, 0.0, 0.0));
     }
     if (keyboard.isOn('K'))
     {
-        angle_diff.add(Vector3(0.0, +1.0, 0.0));
+        angle_diff.add(Vector3(+1.0, 0.0, 0.0));
     }
     if (keyboard.isOn('L'))
     {
-        angle_diff.add(Vector3(-1.0, 0.0, 0.0));
+        angle_diff.add(Vector3(0.0, +1.0, 0.0));
     }
 
     if (angle_diff.length() > 0)

@@ -1,5 +1,6 @@
 #ifndef ROBOF_VIEW_H_
 #define ROBOF_VIEW_H_
+#include "GraphicsDatabase/Camera.h"
 #include "GraphicsDatabase/Vector3.h"
 
 namespace GraphicsDatabase { class Matrix44; }
@@ -11,15 +12,8 @@ using GraphicsDatabase::Vector3;
 class View
 {
 private:
-    double near_clip_;
-    double far_clip_;
-    double angle_yz_;
-    double angle_zx_;
-    double angle_of_view_;
-    double delta_angle_zx_;
-    int width_;
-    int height_;
-    Vector3 position_;
+    GraphicsDatabase::Camera camera_;
+    Vector3 delta_angle_;
 
 public:
     View(int width, int height, double near_clip, double far_clip);
@@ -27,8 +21,6 @@ public:
     double near_clip() const;
     double far_clip() const;
     void decrease_angle_of_view(int a);
-    void draw_debug(int row) const;
-    void draw_debug_string(const double* vertex, int row) const;
     void follow(const Robo& robo);
     void increase_angle_of_view(int a);
     Matrix44 get_perspective_matrix() const;
