@@ -5,6 +5,7 @@
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
 #include "Robo.h"
+#include "TheCollision.h"
 #include "TheDatabase.h"
 #include "TheDebugOutput.h"
 #include "TheHorizon.h"
@@ -149,77 +150,13 @@ void Framework::update()
     }
 
     g_robo->set_delta_next_position();
-
-    Vector3 delta_next_position;
-    Vector3 velocity;
-
-    delta_next_position = *(g_robo->delta_next_position());
-    velocity = *(g_robo->velocity());
-
-    if (g_robo->cuboid().does_intersect(TheHorizon::instance().cuboid()))
-    {
-        delta_next_position.y = 0.0;
-        velocity.y = 0.0;
-        g_robo->delta_next_position(delta_next_position);
-        g_robo->velocity(velocity);
-    }
-
-    delta_next_position = *(g_robo->delta_next_position());
-    velocity = *(g_robo->velocity());
-
-    if (g_robo->cuboid().does_intersect(TheHorizon::instance().cuboid()))
-    {
-        delta_next_position.z = 0.0;
-        velocity.z = 0.0;
-        g_robo->delta_next_position(delta_next_position);
-        g_robo->velocity(velocity);
-    }
-
-    delta_next_position = *(g_robo->delta_next_position());
-    velocity = *(g_robo->velocity());
-
-    if (g_robo->cuboid().does_intersect(TheHorizon::instance().cuboid()))
-    {
-        delta_next_position.x = 0.0;
-        velocity.x = 0.0;
-        g_robo->delta_next_position(delta_next_position);
-        g_robo->velocity(velocity);
-    }
-
-    delta_next_position = *(g_robo->delta_next_position());
-    velocity = *(g_robo->velocity());
-
-    if (g_robo->cuboid().does_intersect(g_opponent->cuboid()))
-    {
-        delta_next_position.z = 0.0;
-        velocity.z = 0.0;
-        g_robo->delta_next_position(delta_next_position);
-        g_robo->velocity(velocity);
-    }
-
-    delta_next_position = *(g_robo->delta_next_position());
-    velocity = *(g_robo->velocity());
-
-    if (g_robo->cuboid().does_intersect(g_opponent->cuboid()))
-    {
-        delta_next_position.x = 0.0;
-        velocity.x = 0.0;
-        g_robo->delta_next_position(delta_next_position);
-        g_robo->velocity(velocity);
-    }
-
-    delta_next_position = *(g_robo->delta_next_position());
-    velocity = *(g_robo->velocity());
-
-    if (g_robo->cuboid().does_intersect(g_opponent->cuboid()))
-    {
-        delta_next_position.y = 0.0;
-        velocity.y = 0.0;
-        g_robo->delta_next_position(delta_next_position);
-        g_robo->velocity(velocity);
-    }
-
+    g_opponent->set_delta_next_position();
+    TheCollision::slide_next_move_if_collision_will_occur(g_robo);
+    TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_opponent);
+    TheCollision::slide_next_move_if_collision_will_occur(g_opponent);
+    TheCollision::slide_next_move_if_collision_will_occur(g_opponent, g_robo);
     g_robo->commit_next_position();
+    g_opponent->commit_next_position();
 
     TheDebugOutput::print(*g_robo);
 
