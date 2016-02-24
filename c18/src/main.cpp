@@ -3,8 +3,10 @@
 #include "GameLib/Input/Keyboard.h"
 #include "GameLib/Input/Manager.h"
 #include "GraphicsDatabase/Vector3.h"
+#include "Cuboid.h"
 #include "Robo.h"
 #include "TheDatabase.h"
+#include "TheDebugOutput.h"
 #include "TheHorizon.h"
 #include "TheTime.h"
 #include "View.h"
@@ -49,7 +51,7 @@ void Framework::update()
         if (!g_robo)
         {
             g_robo = new Robo("myrobo");
-            g_robo->warp(Vector3(0.0, 1.2, -1.0));
+            g_robo->warp(Vector3(0.0, 5.0, -1.0));
             g_robo->rotate_zx(180 * 3);
         }
 
@@ -61,6 +63,9 @@ void Framework::update()
     }
 
     TheTime::instance().tick();
+    TheDebugOutput::clear();
+
+    TheDebugOutput::print(frameRate());
 
     enableDepthTest(true);
     enableDepthWrite(true);
@@ -143,16 +148,84 @@ void Framework::update()
         g_view->decrease_angle_of_view(1);
     }
 
-    g_robo->tick();
+    g_robo->set_delta_next_position();
+
+    Vector3 delta_next_position;
+    Vector3 velocity;
+
+    delta_next_position = *(g_robo->delta_next_position());
+    velocity = *(g_robo->velocity());
+
+    if (g_robo->cuboid().does_intersect(TheHorizon::instance().cuboid()))
+    {
+        delta_next_position.y = 0.0;
+        velocity.y = 0.0;
+        g_robo->delta_next_position(delta_next_position);
+        g_robo->velocity(velocity);
+    }
+
+    delta_next_position = *(g_robo->delta_next_position());
+    velocity = *(g_robo->velocity());
+
+    if (g_robo->cuboid().does_intersect(TheHorizon::instance().cuboid()))
+    {
+        delta_next_position.z = 0.0;
+        velocity.z = 0.0;
+        g_robo->delta_next_position(delta_next_position);
+        g_robo->velocity(velocity);
+    }
+
+    delta_next_position = *(g_robo->delta_next_position());
+    velocity = *(g_robo->velocity());
+
+    if (g_robo->cuboid().does_intersect(TheHorizon::instance().cuboid()))
+    {
+        delta_next_position.x = 0.0;
+        velocity.x = 0.0;
+        g_robo->delta_next_position(delta_next_position);
+        g_robo->velocity(velocity);
+    }
+
+    delta_next_position = *(g_robo->delta_next_position());
+    velocity = *(g_robo->velocity());
+
+    if (g_robo->cuboid().does_intersect(g_opponent->cuboid()))
+    {
+        delta_next_position.z = 0.0;
+        velocity.z = 0.0;
+        g_robo->delta_next_position(delta_next_position);
+        g_robo->velocity(velocity);
+    }
+
+    delta_next_position = *(g_robo->delta_next_position());
+    velocity = *(g_robo->velocity());
+
+    if (g_robo->cuboid().does_intersect(g_opponent->cuboid()))
+    {
+        delta_next_position.x = 0.0;
+        velocity.x = 0.0;
+        g_robo->delta_next_position(delta_next_position);
+        g_robo->velocity(velocity);
+    }
+
+    delta_next_position = *(g_robo->delta_next_position());
+    velocity = *(g_robo->velocity());
+
+    if (g_robo->cuboid().does_intersect(g_opponent->cuboid()))
+    {
+        delta_next_position.y = 0.0;
+        velocity.y = 0.0;
+        g_robo->delta_next_position(delta_next_position);
+        g_robo->velocity(velocity);
+    }
+
+    g_robo->commit_next_position();
+
+    TheDebugOutput::print(*g_robo);
 
     g_robo->draw(*g_view);
     g_opponent->draw(*g_view);
     TheHorizon::instance().draw(*g_view);
-
-    ostringstream oss;
-    oss << frameRate();
-    drawDebugString(0, 0, oss.str().c_str());
-    oss.str("");
 
     if (keyboard.isTriggered('R'))
     {

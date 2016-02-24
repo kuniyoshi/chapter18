@@ -1,6 +1,7 @@
 #ifndef ROBOF__THE_HORIZON_H_
 #define ROBOF__THE_HORIZON_H_
 
+class Cuboid;
 class View;
 
 class TheHorizon
@@ -16,6 +17,7 @@ private:
 
 public:
     ~TheHorizon();
+    Cuboid cuboid() const;
     void draw(const View& view);
 };
 

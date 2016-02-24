@@ -2,6 +2,7 @@
 #include "GameLib/Framework.h"
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Vector3.h"
+#include "Cuboid.h"
 #include "View.h"
 
 using GraphicsDatabase::Matrix44;
@@ -254,5 +255,11 @@ bool TheHorizon::did_create() { return !!g_impl; }
 TheHorizon::TheHorizon() {}
 
 TheHorizon::~TheHorizon() {}
+
+Cuboid TheHorizon::cuboid() const
+{
+    return Cuboid(  Vector3(0.0, -100.0, 0.0),
+                    Vector3(100.0, 100.0, 100.0));
+}
 
 void TheHorizon::draw(const View& view) { g_impl->draw(view); }

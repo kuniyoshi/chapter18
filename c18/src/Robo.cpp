@@ -5,6 +5,7 @@
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
+#include "Cuboid.h"
 #include "TheDatabase.h"
 #include "TheTime.h"
 #include "View.h"
@@ -39,11 +40,13 @@ Robo::Robo(const std::string& id)
 :   model_(0),
     force_(),
     velocity_(),
+    delta_next_position_(),
     angle_zx_(0.0),
     mass_(TheMass)
 {
     TheDatabase::instance().create(id, "robo");
     model_ = TheDatabase::instance().find(id);
+    delta_next_position_.copy_from(*(model_->position()));
 }
 
 Robo::~Robo()
@@ -52,6 +55,26 @@ Robo::~Robo()
 }
 
 double Robo::angle_zx() const { return angle_zx_; }
+
+const Vector3* Robo::velocity() const
+{
+    return &velocity_;
+}
+
+void Robo::velocity(const Vector3& new_value)
+{
+    velocity_ = new_value;
+}
+
+const Vector3* Robo::delta_next_position() const
+{
+    return &delta_next_position_;
+}
+
+void Robo::delta_next_position(const Vector3& new_value)
+{
+    delta_next_position_ = new_value;
+}
 
 namespace
 {
@@ -121,7 +144,6 @@ double get_reverse_direction(double a)
 
 } // namespace
 
-// Cuboid
 void Robo::boost(const Vector3& direction)
 {
     Vector3 tuned_direction(direction);
@@ -144,11 +166,66 @@ void Robo::boost(const Vector3& direction)
     add_force(&force_, angle_zx_, tuned_direction, a);
 }
 
+Cuboid Robo::cuboid() const
+{
+    const Vector3* vertexes = model_->vertexes();
+    size_t size = model_->vertexes_size();
+    Vector3 half_size;
+
+    // model has not been translated, it keeps vertexes (0, 0, 0) coordinate
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        double dx = get_abs(vertexes[i].x);
+        double dy = get_abs(vertexes[i].y);
+        double dz = get_abs(vertexes[i].z);
+
+        if (dx > half_size.x)
+        {
+            half_size.x = dx;
+        }
+
+        if (dy > half_size.y)
+        {
+            half_size.y = dy;
+        }
+
+        if (dz > half_size.z)
+        {
+            half_size.z = dz;
+        }
+    }
+
+    Vector3 next_position(*(model_->position()));
+    next_position.add(delta_next_position_);
+
+    return Cuboid(next_position, half_size);
+}
+
+void Robo::commit_next_position()
+{
+    Vector3 next_position(*(model_->position()));
+    next_position.add(delta_next_position_);
+    model_->position(next_position);
+}
+
 const Vector3* Robo::center() const { return model_->position(); }
 
 void Robo::draw(const View& view) const
 {
     model_->draw(view.get_perspective_matrix());
+}
+
+void Robo::print(std::ostringstream* oss) const
+{
+    const Vector3* balance = model_->position();
+    *oss << "{";
+    *oss << balance->x;
+    *oss << ", ";
+    *oss << balance->y;
+    *oss << ", ";
+    *oss << balance->z;
+    *oss << "}";
 }
 
 void Robo::rotate_zx(int angle_zx)
@@ -166,7 +243,7 @@ void Robo::run(const Vector3& direction)
     add_force(&force_, angle_zx_, direction, a);
 }
 
-void Robo::tick()
+void Robo::set_delta_next_position()
 {
     TheTime t = TheTime::instance();
     double dt = static_cast< double >(t.delta()) / 1000.0;
@@ -174,12 +251,6 @@ void Robo::tick()
     stop_if_too_small(&velocity_, force_);
 
     const Vector3* balance = model_->position();
-
-    if ((force_.y < 0.0 || velocity_.y < 0.0) && balance->y <= Height / 2.0)
-    {
-        force_.y = 0.0;
-        velocity_.y = 0.0;
-    }
 
     Vector3 drag(get_drag(velocity_));
     Vector3 friction;
@@ -204,15 +275,7 @@ void Robo::tick()
     Vector3 delta(velocity_);
     delta.multiply(dt);
 
-    Vector3 new_position(*balance);
-    new_position.add(delta);
-
-    if (new_position.y < Height / 2.0)
-    {
-        new_position.y = Height / 2.0;
-    }
-
-    model_->position(new_position);
+    delta_next_position_ = delta;
 
     force_.set(0.0, -GravityAcceleration * mass_, 0.0);
 }
