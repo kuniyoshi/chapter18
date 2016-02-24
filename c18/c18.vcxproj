@@ -162,16 +162,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Cuboid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Robo.cpp" />
     <ClCompile Include="src\TheDatabase.cpp" />
+    <ClCompile Include="src\TheDebugOutput.cpp" />
     <ClCompile Include="src\TheHorizon.cpp" />
     <ClCompile Include="src\TheTime.cpp" />
     <ClCompile Include="src\View.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Cuboid.h" />
     <ClInclude Include="src\Robo.h" />
     <ClInclude Include="src\TheDatabase.h" />
+    <ClInclude Include="src\TheDebugOutput.h" />
     <ClInclude Include="src\TheHorizon.h" />
     <ClInclude Include="src\TheTime.h" />
     <ClInclude Include="src\View.h" />
