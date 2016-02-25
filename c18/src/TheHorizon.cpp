@@ -3,6 +3,7 @@
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
+#include "Sphere.h"
 #include "View.h"
 
 using GraphicsDatabase::Matrix44;
@@ -263,3 +264,8 @@ Cuboid TheHorizon::cuboid() const
 }
 
 void TheHorizon::draw(const View& view) { g_impl->draw(view); }
+
+Sphere TheHorizon::sphere() const
+{
+    return Sphere(Vector3(0.0, -1000.0, 0.0), 1000.0);
+}

@@ -6,8 +6,9 @@
 
 namespace GameLib { class Texture; }
 namespace GraphicsDatabase { class Model; }
-class View;
 class Cuboid;
+class Sphere;
+class View;
 
 using GraphicsDatabase::Model;
 using GraphicsDatabase::Vector3;
@@ -39,6 +40,7 @@ public:
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);
     void set_delta_next_position();
+    Sphere sphere() const;
     void warp(const Vector3& to);
 };
 

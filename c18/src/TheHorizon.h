@@ -2,6 +2,7 @@
 #define ROBOF__THE_HORIZON_H_
 
 class Cuboid;
+class Sphere;
 class View;
 
 class TheHorizon
@@ -19,6 +20,7 @@ public:
     ~TheHorizon();
     Cuboid cuboid() const;
     void draw(const View& view);
+    Sphere sphere() const;
 };
 
 #endif

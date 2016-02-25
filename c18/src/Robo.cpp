@@ -6,6 +6,7 @@
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
+#include "Sphere.h"
 #include "TheDatabase.h"
 #include "TheTime.h"
 #include "View.h"
@@ -220,11 +221,19 @@ void Robo::print(std::ostringstream* oss) const
 {
     const Vector3* balance = model_->position();
     *oss << "{";
-    *oss << balance->x;
+    *oss << static_cast< int >(balance->x * 100);
     *oss << ", ";
-    *oss << balance->y;
+    *oss << static_cast< int >(balance->y * 100);
     *oss << ", ";
-    *oss << balance->z;
+    *oss << static_cast< int >(balance->z * 100);
+    *oss << "}";
+
+    *oss << "{";
+    *oss << static_cast< int >(velocity_.x * 100);
+    *oss << ", ";
+    *oss << static_cast< int >(velocity_.y * 100);
+    *oss << ", ";
+    *oss << static_cast< int >(velocity_.z * 100);
     *oss << "}";
 }
 
@@ -278,6 +287,13 @@ void Robo::set_delta_next_position()
     delta_next_position_ = delta;
 
     force_.set(0.0, -GravityAcceleration * mass_, 0.0);
+}
+
+Sphere Robo::sphere() const
+{
+    Vector3 next_position(*(model_->position()));
+    next_position.add(delta_next_position_);
+    return Sphere(next_position, 1.0); // Cheating.  This is defined at json
 }
 
 void Robo::warp(const Vector3& to)
