@@ -16,8 +16,6 @@ public:
     static void print(const char* string);
     template< class T >
     static void print(const T& some);
-    // static void print(const Robo& roob);
-    // static void print(const Triangle& triangle);
 };
 
 #endif
