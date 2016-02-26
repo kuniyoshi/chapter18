@@ -7,6 +7,7 @@
 #include "Sphere.h"
 #include "TheHorizon.h"
 #include "Triangle.h"
+#include "Wall.h"
 
 using GraphicsDatabase::Vector3;
 
@@ -19,6 +20,12 @@ void TheCollision::slide_next_move_if_collision_will_occur( Robo* robo,
                                                             Robo* opponent)
 {
     by_sphere(robo, opponent);
+}
+
+void TheCollision::slide_next_move_if_collision_will_occur( Robo* robo,
+                                                            Wall* wall)
+{
+    by_segment(robo, wall);
 }
 
 void TheCollision::by_cuboid(Robo* robo)
@@ -177,15 +184,26 @@ void TheCollision::by_sphere(Robo* robo, Robo* opponent)
     robo->velocity(v);
 }
 
-void TheCollision::by_segment(Robo* robo)
+namespace
 {
-    std::vector< Triangle > triangles = TheHorizon::instance().triangles();
-    const Segment segment = robo->segment();
+
+void robo_to_triangles(Robo* robo, std::vector< Triangle > triangles)
+{
+    const std::vector< Segment > segments = robo->segments();
+    std::vector< Segment >::const_iterator it = segments.begin();
     std::pair< bool, Vector3 > collision_point(false, Vector3(0.0, 0.0, 0.0));
 
-    for (int i = 0; i < 2; ++i)
+    for (size_t i = 0; i < triangles.size(); ++i)
     {
-        collision_point = segment.get_intersected_point(triangles[i]);
+        for (it = segments.begin(); it != segments.end(); ++it)
+        {
+            collision_point = (*it).get_intersected_point(triangles[i]);
+
+            if (collision_point.first)
+            {
+                break;
+            }
+        }
 
         if (collision_point.first)
         {
@@ -231,4 +249,18 @@ void TheCollision::by_segment(Robo* robo)
     new_value = *delta_next_position;
     new_value.subtract(delta);
     robo->delta_next_position(new_value);
+}
+
+} // namespace -
+
+void TheCollision::by_segment(Robo* robo)
+{
+    std::vector< Triangle > triangles = TheHorizon::instance().triangles();
+    robo_to_triangles(robo, triangles);
+}
+
+void TheCollision::by_segment(Robo* robo, Wall* wall)
+{
+    std::vector< Triangle > triangles = wall->triangles();
+    robo_to_triangles(robo, triangles);
 }

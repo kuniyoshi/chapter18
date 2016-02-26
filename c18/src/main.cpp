@@ -11,6 +11,7 @@
 #include "TheHorizon.h"
 #include "TheTime.h"
 #include "View.h"
+#include "Wall.h"
 
 using namespace std;
 using GraphicsDatabase::Vector3;
@@ -24,6 +25,7 @@ const double FarClip    = 1000.0;
 View* g_view = 0;
 Robo* g_robo = 0;
 Robo* g_opponent = 0;
+Wall* g_wall = 0;
 
 void Framework::update()
 {
@@ -60,6 +62,12 @@ void Framework::update()
         {
             g_opponent = new Robo("opponent");
             g_opponent->warp(Vector3(0.0, 5.0, -20));
+        }
+
+        if (!g_wall)
+        {
+            g_wall = new Wall("wall");
+            g_wall->warp(Vector3(0.0, 1.2, -5.0));
         }
     }
 
@@ -153,8 +161,10 @@ void Framework::update()
     g_opponent->set_delta_next_position();
     TheCollision::slide_next_move_if_collision_will_occur(g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_opponent);
+    TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_wall);
     TheCollision::slide_next_move_if_collision_will_occur(g_opponent);
     TheCollision::slide_next_move_if_collision_will_occur(g_opponent, g_robo);
+    TheCollision::slide_next_move_if_collision_will_occur(g_opponent, g_wall);
     g_robo->commit_next_position();
     g_opponent->commit_next_position();
 
@@ -163,6 +173,7 @@ void Framework::update()
     g_robo->draw(*g_view);
     g_opponent->draw(*g_view);
     TheHorizon::instance().draw(*g_view);
+    g_wall->draw(*g_view);
 
     if (keyboard.isTriggered('R'))
     {
@@ -172,6 +183,7 @@ void Framework::update()
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);
+        SAFE_DELETE(g_wall);
     }
 
     if (Input::Manager::instance().keyboard().isTriggered('T'))
@@ -187,6 +199,7 @@ void Framework::update()
         SAFE_DELETE(g_view);
         SAFE_DELETE(g_robo);
         SAFE_DELETE(g_opponent);
+        SAFE_DELETE(g_wall);
     }
 }
 

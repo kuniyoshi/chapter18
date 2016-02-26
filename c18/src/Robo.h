@@ -2,6 +2,7 @@
 #define ROBOF__ROBO_H_
 #include <sstream>
 #include <string>
+#include <vector>
 #include "GraphicsDatabase/Vector3.h"
 
 namespace GameLib { class Texture; }
@@ -43,6 +44,7 @@ public:
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);
     Segment segment() const;
+    std::vector< Segment > segments() const;
     void set_delta_next_position();
     Sphere sphere() const;
     void warp(const Vector3& to);

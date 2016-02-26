@@ -11,6 +11,7 @@ private:
 
 public:
     static void clear();
+    static void print(const unsigned& a);
     static void print(const int& a);
     static void print(const double& a);
     static void print(const char* string);

@@ -1,5 +1,6 @@
 #include "Robo.h"
 #include <sstream>
+#include <vector>
 #include "GameLib/Framework.h"
 #include "GameLib/Math.h"
 #include "GraphicsDatabase/Matrix44.h"
@@ -270,6 +271,34 @@ Segment Robo::segment() const
     Vector3 to(next_position);
     to.add(Vector3(0.0, -1.0, 0.0));
     return Segment(next_position, to);
+}
+
+std::vector< Segment > Robo::segments() const
+{
+    std::vector< Segment > segments;
+    segments.reserve(2);
+    Vector3 balance(*(model_->position()));
+    balance.add(delta_next_position_);
+
+    Vector3 x0(balance);
+    x0.x = x0.x - 0.25;
+    Vector3 x1(balance);
+    x1.x = x1.x + 0.25;
+    segments.push_back(Segment(x0, x1));
+
+    Vector3 y0(balance);
+    y0.y = y0.y - 0.88;
+    Vector3 y1(balance);
+    y1.y = y1.y + 0.88;
+    segments.push_back(Segment(y0, y1));
+
+    Vector3 z0(balance);
+    z0.z = z0.z - 0.25;
+    Vector3 z1(balance);
+    z1.z = z1.z + 0.25;
+    segments.push_back(Segment(z0, z1));
+
+    return segments;
 }
 
 void Robo::set_delta_next_position()

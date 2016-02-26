@@ -8,6 +8,17 @@ int TheDebugOutput::row = 0;
 
 void TheDebugOutput::clear() { TheDebugOutput::row = 0; }
 
+void TheDebugOutput::print(const unsigned& a)
+{
+    std::ostringstream oss;
+    oss << a;
+
+    GameLib::Framework f = GameLib::Framework::instance();
+    f.drawDebugString(0, row, oss.str().c_str());
+
+    ++row;
+}
+
 void TheDebugOutput::print(const int& a)
 {
     std::ostringstream oss;
