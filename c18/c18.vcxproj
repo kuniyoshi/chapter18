@@ -174,6 +174,7 @@
     <ClCompile Include="src\TheTime.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
     <ClCompile Include="src\View.cpp" />
+    <ClCompile Include="src\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cuboid.h" />
@@ -187,9 +188,15 @@
     <ClInclude Include="src\TheTime.h" />
     <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\View.h" />
+    <ClInclude Include="src\Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\models.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\image\grid.tga" />
+    <Image Include="data\image\robo.tga" />
+    <Image Include="data\image\stage.tga" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

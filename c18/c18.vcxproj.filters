@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="リソース ファイル\image">
+      <UniqueIdentifier>{d521ef23-3106-474e-b424-8bfc21e0f8f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -51,6 +54,9 @@
     <ClCompile Include="src\Triangle.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="src\Wall.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Robo.h">
@@ -86,10 +92,24 @@
     <ClInclude Include="src\Triangle.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="src\Wall.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\models.json">
       <Filter>リソース ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\image\grid.tga">
+      <Filter>リソース ファイル\image</Filter>
+    </Image>
+    <Image Include="data\image\robo.tga">
+      <Filter>リソース ファイル\image</Filter>
+    </Image>
+    <Image Include="data\image\stage.tga">
+      <Filter>リソース ファイル\image</Filter>
+    </Image>
   </ItemGroup>
 </Project>
