@@ -59,7 +59,7 @@ void Framework::update()
         if (!g_opponent)
         {
             g_opponent = new Robo("opponent");
-            g_opponent->warp(Vector3(0.0, 1.0, -20));
+            g_opponent->warp(Vector3(0.0, 5.0, -20));
         }
     }
 
