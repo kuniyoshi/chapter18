@@ -26,8 +26,8 @@ Segment::~Segment() {}
 // def: g-> dot d-> = GD
 // GD * DE = u DD * DE + v ED * DE
 // GE * DD = u DE * DD + v EE * DD
-// GD * GE - GE * DD = v(ED * DE - EE * DD)
-// v = (GD * GE - GE * DD) / (ED * DE - EE * DD)
+// GD * DE - GE * DD = v(ED * DE - EE * DD)
+// v = (GD * DE - GE * DD) / (ED * DE - EE * DD)
 // GD * EE = u DD * EE + v ED * EE
 // GE * ED = u DE * ED + v EE * ED
 // GD * EE - GE * ED = u(DD * EE - DE * ED)
@@ -77,7 +77,7 @@ Segment::get_intersected_point(const Triangle& triangle) const
     intersected_point = p; // do not confuse when got <false, p>, it is false
 
     Vector3 g(p);
-    g.subtract(triangle.p0);
+    g.subtract(c);
 
     const double dd = d.dot(d);
     const double de = d.dot(e);
@@ -94,11 +94,11 @@ Segment::get_intersected_point(const Triangle& triangle) const
         return std::pair< bool, Vector3 >(false, intersected_point);
     }
 
-    const double v = (gd * ge - ge * dd) / (ed * de - ee * dd);
+    const double v = (gd * de - ge * dd) / (ed * de - ee * dd);
 
     const double uv = u + v;
 
-    if (uv < 0.0 || uv > 1.0)
+    if (v < 0.0 || uv > 1.0)
     {
         return std::pair< bool, Vector3 >(false, intersected_point);
     }
