@@ -7,6 +7,7 @@
 namespace GameLib { class Texture; }
 namespace GraphicsDatabase { class Model; }
 class Cuboid;
+class Segment;
 class Sphere;
 class View;
 
@@ -26,11 +27,13 @@ private:
 public:
     Robo(const std::string& id);
     ~Robo();
-    double angle_zx() const;
+    const Vector3* force() const;
+    void force(const Vector3& new_value);
     const Vector3* velocity() const;
     void velocity(const Vector3& new_value);
     const Vector3* delta_next_position() const;
     void delta_next_position(const Vector3& new_value);
+    double angle_zx() const;
     void boost(const Vector3& direction);
     const Vector3* center() const;
     Cuboid cuboid() const;
@@ -39,6 +42,7 @@ public:
     void print(std::ostringstream* oss) const;
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);
+    Segment segment() const;
     void set_delta_next_position();
     Sphere sphere() const;
     void warp(const Vector3& to);

@@ -1,8 +1,10 @@
 #ifndef ROBOF__THE_HORIZON_H_
 #define ROBOF__THE_HORIZON_H_
+#include <vector>
 
 class Cuboid;
 class Sphere;
+class Triangle;
 class View;
 
 class TheHorizon
@@ -21,6 +23,7 @@ public:
     Cuboid cuboid() const;
     void draw(const View& view);
     Sphere sphere() const;
+    std::vector< Triangle > triangles() const;
 };
 
 #endif

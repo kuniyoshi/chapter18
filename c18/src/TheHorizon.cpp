@@ -1,9 +1,11 @@
 #include "TheHorizon.h"
+#include <vector>
 #include "GameLib/Framework.h"
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
 #include "Sphere.h"
+#include "Triangle.h"
 #include "View.h"
 
 using GraphicsDatabase::Matrix44;
@@ -268,4 +270,17 @@ void TheHorizon::draw(const View& view) { g_impl->draw(view); }
 Sphere TheHorizon::sphere() const
 {
     return Sphere(Vector3(0.0, -1000.0, 0.0), 1000.0);
+}
+
+std::vector< Triangle > TheHorizon::triangles() const
+{
+    std::vector< Triangle > triangles;
+    triangles.reserve(2);
+    triangles.push_back(Triangle(   Vector3(-1000.0, 0.0, -1000.0),
+                                    Vector3(+1000.0, 0.0, -1000.0),
+                                    Vector3(-1000.0, 0.0, +1000.0)));
+    triangles.push_back(Triangle(   Vector3(+1000.0, 0.0, -1000.0),
+                                    Vector3(+1000.0, 0.0, +1000.0),
+                                    Vector3(-1000.0, 0.0, +1000.0)));
+    return triangles;
 }

@@ -15,6 +15,7 @@ private:
     static void by_cuboid(Robo* robo, Robo* opponent);
     static void by_sphere(Robo* robo);
     static void by_sphere(Robo* robo, Robo* opponent);
+    static void by_segment(Robo* robo);
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
+#include "Segment.h"
 #include "Sphere.h"
 #include "TheDatabase.h"
 #include "TheTime.h"
@@ -55,7 +56,15 @@ Robo::~Robo()
     model_ = 0; // will be deleted by the database
 }
 
-double Robo::angle_zx() const { return angle_zx_; }
+const Vector3* Robo::force() const
+{
+    return &force_;
+}
+
+void Robo::force(const Vector3& new_value)
+{
+    force_ = new_value;
+}
 
 const Vector3* Robo::velocity() const
 {
@@ -76,6 +85,8 @@ void Robo::delta_next_position(const Vector3& new_value)
 {
     delta_next_position_ = new_value;
 }
+
+double Robo::angle_zx() const { return angle_zx_; }
 
 namespace
 {
@@ -250,6 +261,15 @@ void Robo::run(const Vector3& direction)
     const double RunAcceleration = 22.0;
     const double a = RunAcceleration * mass_;
     add_force(&force_, angle_zx_, direction, a);
+}
+
+Segment Robo::segment() const
+{
+    Vector3 next_position(*(model_->position()));
+    next_position.add(delta_next_position_);
+    Vector3 to(next_position);
+    to.add(Vector3(0.0, -1.0, 0.0));
+    return Segment(next_position, to);
 }
 
 void Robo::set_delta_next_position()

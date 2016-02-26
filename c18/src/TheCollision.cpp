@@ -1,15 +1,18 @@
 #include "TheCollision.h"
+#include <vector>
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
 #include "Robo.h"
+#include "Segment.h"
 #include "Sphere.h"
 #include "TheHorizon.h"
+#include "Triangle.h"
 
 using GraphicsDatabase::Vector3;
 
 void TheCollision::slide_next_move_if_collision_will_occur(Robo* robo)
 {
-    by_sphere(robo);
+    by_segment(robo);
 }
 
 void TheCollision::slide_next_move_if_collision_will_occur( Robo* robo,
@@ -172,4 +175,60 @@ void TheCollision::by_sphere(Robo* robo, Robo* opponent)
     v.subtract(to_the_opponent);
 
     robo->velocity(v);
+}
+
+void TheCollision::by_segment(Robo* robo)
+{
+    std::vector< Triangle > triangles = TheHorizon::instance().triangles();
+    const Segment segment = robo->segment();
+    std::pair< bool, Vector3 > collision_point(false, Vector3(0.0, 0.0, 0.0));
+
+    for (int i = 0; i < 2; ++i)
+    {
+        collision_point = segment.get_intersected_point(triangles[i]);
+
+        if (collision_point.first)
+        {
+            break;
+        }
+    }
+
+    if (!collision_point.first)
+    {
+        return;
+    }
+
+    const Vector3* balance = robo->center();
+    Vector3 to_collision_point(collision_point.second);
+    to_collision_point.subtract(*balance);
+
+    const Vector3* force = robo->force();
+    double cosine = force->dot(to_collision_point)
+    / (force->length() * to_collision_point.length());
+    Vector3 delta(*force);
+    delta.multiply(cosine);
+
+    Vector3 new_value(*force);
+    new_value.subtract(delta);
+    robo->force(new_value);
+
+    const Vector3* velocity = robo->velocity();
+    cosine = velocity->dot(to_collision_point)
+    / (velocity->length() * to_collision_point.length());
+    delta = *velocity;
+    delta.multiply(cosine);
+
+    new_value = *velocity;
+    new_value.subtract(delta);
+    robo->velocity(new_value);
+
+    const Vector3* delta_next_position = robo->delta_next_position();
+    cosine = delta_next_position->dot(to_collision_point)
+    / (delta_next_position->length() * to_collision_point.length());
+    delta = *delta_next_position;
+    delta.multiply(cosine);
+
+    new_value = *delta_next_position;
+    new_value.subtract(delta);
+    robo->delta_next_position(new_value);
 }
