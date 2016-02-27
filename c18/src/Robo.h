@@ -45,6 +45,7 @@ public:
     void run(const Vector3& direction);
     Segment segment() const;
     std::vector< Segment > segments() const;
+    void set_model_angle_zx(double new_value);
     void set_delta_next_position();
     Sphere sphere() const;
     void warp(const Vector3& to);

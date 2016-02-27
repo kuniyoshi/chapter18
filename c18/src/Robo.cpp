@@ -301,6 +301,14 @@ std::vector< Segment > Robo::segments() const
     return segments;
 }
 
+void Robo::set_model_angle_zx(double new_value)
+{
+    angle_zx_ = new_value;
+    Vector3 angle(*model_->angle());
+    angle.y = new_value;
+    model_->angle(angle);
+}
+
 void Robo::set_delta_next_position()
 {
     TheTime t = TheTime::instance();
