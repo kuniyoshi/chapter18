@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="src\Cuboid.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Pad.cpp" />
     <ClCompile Include="src\Robo.cpp" />
     <ClCompile Include="src\Segment.cpp" />
     <ClCompile Include="src\Sphere.cpp" />
@@ -178,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cuboid.h" />
+    <ClInclude Include="src\Pad.h" />
     <ClInclude Include="src\Robo.h" />
     <ClInclude Include="src\Segment.h" />
     <ClInclude Include="src\Sphere.h" />
