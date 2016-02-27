@@ -26,6 +26,17 @@ Robo* g_robo = 0;
 Robo* g_opponent = 0;
 Wall* g_wall = 0;
 
+void clear_globals()
+{
+    TheTime::destroy();
+    TheHorizon::destroy();
+    TheDatabase::destroy();
+    SAFE_DELETE(g_view);
+    SAFE_DELETE(g_robo);
+    SAFE_DELETE(g_opponent);
+    SAFE_DELETE(g_wall);
+}
+
 void Framework::update()
 {
     // make sure globals are
@@ -166,13 +177,7 @@ void Framework::update()
 
     if (pad.isOn(Pad::Reset))
     {
-        TheTime::destroy();
-        TheHorizon::destroy();
-        TheDatabase::destroy();
-        SAFE_DELETE(g_view);
-        SAFE_DELETE(g_robo);
-        SAFE_DELETE(g_opponent);
-        SAFE_DELETE(g_wall);
+        clear_globals();
     }
 
     if (pad.isOn(Pad::Terminate))
@@ -182,13 +187,7 @@ void Framework::update()
 
     if (isEndRequested())
     {
-        TheTime::destroy();
-        TheHorizon::destroy();
-        TheDatabase::destroy();
-        SAFE_DELETE(g_view);
-        SAFE_DELETE(g_robo);
-        SAFE_DELETE(g_opponent);
-        SAFE_DELETE(g_wall);
+        clear_globals();
     }
 }
 
