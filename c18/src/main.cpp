@@ -1,9 +1,8 @@
 #include <sstream>
 #include "GameLib/Framework.h"
-#include "GameLib/Input/Keyboard.h"
-#include "GameLib/Input/Manager.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Cuboid.h"
+#include "Pad.h"
 #include "Robo.h"
 #include "TheCollision.h"
 #include "TheDatabase.h"
@@ -81,21 +80,21 @@ void Framework::update()
 
     Vector3 move_direction;
 
-    Input::Keyboard keyboard = Input::Manager::instance().keyboard();
+    Pad pad(0);
 
-    if (keyboard.isOn('W'))
+    if (pad.isOn(Pad::LeftStickUp))
     {
         move_direction.add(Vector3(0.0, 0.0, +1.0));
     }
-    if (keyboard.isOn('X'))
+    if (pad.isOn(Pad::LeftTrigger))
     {
         move_direction.add(Vector3(+1.0, 0.0, 0.0));
     }
-    if (keyboard.isOn('C'))
+    if (pad.isOn(Pad::RightTrigger))
     {
         move_direction.add(Vector3(-1.0, 0.0, 0.0));
     }
-    if (keyboard.isOn('Z'))
+    if (pad.isOn(Pad::LeftStickDown))
     {
         move_direction.add(Vector3(0.0, 0.0, -1.0));
     }
@@ -106,17 +105,17 @@ void Framework::update()
         g_robo->run(move_direction);
     }
 
-    if (keyboard.isOn(' '))
+    if (pad.isOn(Pad::B))
     {
         g_robo->boost(move_direction);
     }
 
-    if (keyboard.isOn('S'))
+    if (pad.isOn(Pad::LeftStickRight))
     {
         g_robo->rotate_zx(-1);
     }
 
-    if (keyboard.isOn('A'))
+    if (pad.isOn(Pad::LeftStickLeft))
     {
         g_robo->rotate_zx(1);
     }
@@ -125,19 +124,19 @@ void Framework::update()
 
     Vector3 angle_diff;
 
-    if (keyboard.isOn('H'))
+    if (pad.isOn(Pad::RightStickLeft))
     {
         angle_diff.add(Vector3(0.0, -1.0, 0.0));
     }
-    if (keyboard.isOn('J'))
+    if (pad.isOn(Pad::RightStickDown))
     {
         angle_diff.add(Vector3(-1.0, 0.0, 0.0));
     }
-    if (keyboard.isOn('K'))
+    if (pad.isOn(Pad::RightStickUp))
     {
         angle_diff.add(Vector3(+1.0, 0.0, 0.0));
     }
-    if (keyboard.isOn('L'))
+    if (pad.isOn(Pad::RightStickRight))
     {
         angle_diff.add(Vector3(0.0, +1.0, 0.0));
     }
@@ -145,16 +144,6 @@ void Framework::update()
     if (angle_diff.length() > 0)
     {
         g_view->rotate(angle_diff);
-    }
-
-    if (keyboard.isOn('Y'))
-    {
-        g_view->increase_angle_of_view(1);
-    }
-
-    if (keyboard.isOn('U'))
-    {
-        g_view->decrease_angle_of_view(1);
     }
 
     g_robo->set_delta_next_position();
@@ -175,7 +164,7 @@ void Framework::update()
     TheHorizon::instance().draw(*g_view);
     g_wall->draw(*g_view);
 
-    if (keyboard.isTriggered('R'))
+    if (pad.isOn(Pad::Reset))
     {
         TheTime::destroy();
         TheHorizon::destroy();
@@ -186,7 +175,7 @@ void Framework::update()
         SAFE_DELETE(g_wall);
     }
 
-    if (Input::Manager::instance().keyboard().isTriggered('T'))
+    if (pad.isOn(Pad::Terminate))
     {
         requestEnd();
     }
