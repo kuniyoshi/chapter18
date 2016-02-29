@@ -26,6 +26,49 @@ Robo* g_robo = 0;
 Robo* g_opponent = 0;
 Wall* g_wall = 0;
 
+void make_sure_globals_are()
+{
+    if (!TheTime::did_create())
+    {
+        TheTime::create();
+    }
+
+    if (!TheHorizon::did_create())
+    {
+        TheHorizon::create();
+    }
+
+    if (!TheDatabase::did_create())
+    {
+        TheDatabase::create();
+    }
+
+    if (!g_view)
+    {
+        GameLib::Framework f = GameLib::Framework::instance();
+        g_view = new View(f.width(), f.height(), NearClip, FarClip);
+    }
+
+    if (!g_robo)
+    {
+        g_robo = new Robo("myrobo");
+        g_robo->warp(Vector3(0.0, 10.0, -1.0));
+        g_robo->set_model_angle_zx(180.0);
+    }
+
+    if (!g_opponent)
+    {
+        g_opponent = new Robo("opponent");
+        g_opponent->warp(Vector3(0.0, 10.0, -20));
+    }
+
+    if (!g_wall)
+    {
+        g_wall = new Wall("wall");
+        g_wall->warp(Vector3(0.0, 1.2, -5.0));
+    }
+}
+
 void clear_globals()
 {
     TheTime::destroy();
@@ -39,55 +82,12 @@ void clear_globals()
 
 void Framework::update()
 {
-    // make sure globals are
-    {
-        if (!TheTime::did_create())
-        {
-            TheTime::create();
-        }
-
-        if (!TheHorizon::did_create())
-        {
-            TheHorizon::create();
-        }
-
-        if (!TheDatabase::did_create())
-        {
-            TheDatabase::create();
-        }
-
-        if (!g_view)
-        {
-            g_view = new View(width(), height(), NearClip, FarClip);
-        }
-
-        if (!g_robo)
-        {
-            g_robo = new Robo("myrobo");
-            g_robo->warp(Vector3(0.0, 5.0, -1.0));
-            g_robo->set_model_angle_zx(180.0);
-        }
-
-        if (!g_opponent)
-        {
-            g_opponent = new Robo("opponent");
-            g_opponent->warp(Vector3(0.0, 5.0, -20));
-        }
-
-        if (!g_wall)
-        {
-            g_wall = new Wall("wall");
-            g_wall->warp(Vector3(0.0, 1.2, -5.0));
-        }
-    }
+    make_sure_globals_are();
 
     TheTime::instance().tick();
     TheDebugOutput::clear();
 
     TheDebugOutput::print(frameRate());
-
-    enableDepthTest(true);
-    enableDepthWrite(true);
 
     Vector3 move_direction;
 
@@ -112,7 +112,7 @@ void Framework::update()
 
     if (move_direction.length() > 0)
     {
-        move_direction.normalize(0.05);
+        move_direction.normalize(1.0);
         g_robo->run(move_direction);
     }
 
