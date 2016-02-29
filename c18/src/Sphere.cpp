@@ -21,6 +21,7 @@ bool Sphere::does_intersect(const Sphere& other) const
 {
     Vector3 diff(balance_);
     diff.subtract(other.balance_);
+    double rr = r_ + other.r_;
 
-    return diff.squared_length() < (r_ + other.r_) * (r_ + other.r_);
+    return diff.squared_length() < rr * rr;
 }
