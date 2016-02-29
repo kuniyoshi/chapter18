@@ -1,5 +1,6 @@
 #include "GameLib/Framework.h"
 #include "GraphicsDatabase/Vector3.h"
+#include "Ai/TheArmoury.h"
 #include "Pad.h"
 #include "Robo.h"
 #include "TheCollision.h"
@@ -41,6 +42,11 @@ void make_sure_globals_are()
         TheDatabase::create();
     }
 
+    if (!Ai::TheArmoury::did_create())
+    {
+        Ai::TheArmoury::create();
+    }
+
     if (!g_view)
     {
         GameLib::Framework f = GameLib::Framework::instance();
@@ -72,6 +78,7 @@ void clear_globals()
     TheTime::destroy();
     TheHorizon::destroy();
     TheDatabase::destroy();
+    Ai::TheArmoury::destroy();
     SAFE_DELETE(g_view);
     SAFE_DELETE(g_robo);
     SAFE_DELETE(g_opponent);
@@ -112,6 +119,11 @@ void Framework::update()
     {
         move_direction.normalize(1.0);
         g_robo->run(move_direction);
+    }
+
+    if (pad.isOn(Pad::A))
+    {
+        g_robo->fire_bullet(g_view->angle());
     }
 
     if (pad.isOn(Pad::B))
@@ -155,6 +167,8 @@ void Framework::update()
         g_view->rotate(angle_diff);
     }
 
+    Ai::TheArmoury::instance().update();
+
     g_robo->set_delta_next_position();
     g_opponent->set_delta_next_position();
     TheCollision::slide_next_move_if_collision_will_occur(g_robo);
@@ -167,11 +181,13 @@ void Framework::update()
     g_opponent->commit_next_position();
 
     TheDebugOutput::print(*g_robo);
+    // TheDebugOutput::print(*g_view);
 
     g_robo->draw(*g_view);
     g_opponent->draw(*g_view);
     TheHorizon::instance().draw(*g_view);
     g_wall->draw(*g_view);
+    Ai::TheArmoury::instance().draw(*g_view);
 
     if (pad.isOn(Pad::Reset))
     {

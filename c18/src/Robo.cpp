@@ -1,11 +1,13 @@
 #include "Robo.h"
 #include <sstream>
+#include <string>
 #include <vector>
 #include "GameLib/Framework.h"
 #include "GameLib/Math.h"
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
+#include "Ai/TheArmoury.h"
 #include "Cuboid.h"
 #include "Segment.h"
 #include "Sphere.h"
@@ -40,21 +42,40 @@ const int AngleScale = 3;
 } // namespae -
 
 Robo::Robo(const std::string& id)
-:   model_(0),
+:   id_(id),
+    model_(0),
     force_(),
     velocity_(),
     delta_next_position_(),
     angle_zx_(0.0),
     mass_(TheMass)
 {
-    TheDatabase::instance().create(id, "robo");
-    model_ = TheDatabase::instance().find(id);
+    TheDatabase::instance().create(id_, "robo");
+    model_ = TheDatabase::instance().find(id_);
     delta_next_position_.copy_from(*(model_->position()));
 }
 
 Robo::~Robo()
 {
     model_ = 0; // will be deleted by the database
+}
+
+const std::string& Robo::id() const { return id_; }
+
+int Robo::int_id() const
+{
+    if (id_ == "myrobo")
+    {
+        return 0;
+    }
+    else if (id_ == "opponent")
+    {
+        return 1;
+    }
+    else
+    {
+        return 2;
+    }
 }
 
 const Vector3* Robo::force() const
@@ -229,6 +250,14 @@ void Robo::draw(const View& view) const
     model_->draw(view.get_perspective_matrix());
 }
 
+void Robo::fire_bullet(const Vector3& angle)
+{
+    Vector3 modified_angle(-angle.x, -angle.y, -angle.z);
+    modified_angle.multiply(0.3); // TODO: need logic
+    modified_angle.y = modified_angle.y + angle_zx_;
+    Ai::TheArmoury::instance().fire(*this, *model_->position(), modified_angle);
+}
+
 void Robo::print(std::ostringstream* oss) const
 {
     const Vector3* balance = model_->position();
@@ -238,7 +267,7 @@ void Robo::print(std::ostringstream* oss) const
     *oss << static_cast< int >(balance->y * 100);
     *oss << ", ";
     *oss << static_cast< int >(balance->z * 100);
-    *oss << "}";
+    *oss << "}, ";
 
     *oss << "{";
     *oss << static_cast< int >(velocity_.x * 100);

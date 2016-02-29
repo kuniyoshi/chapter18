@@ -42,6 +42,13 @@ double View::near_clip() const { return camera_.near_clip(); }
 
 double View::far_clip() const { return camera_.far_clip(); }
 
+Vector3 View::angle() const
+{
+    Vector3 angle(*(camera_.angle()));
+    angle.add(delta_angle_);
+    return angle;
+}
+
 void View::decrease_angle_of_view(int a)
 {
     unsigned delta = TheTime::instance().delta();
@@ -87,6 +94,18 @@ void View::increase_angle_of_view(int a)
     double angle_of_view
     = camera_.angle_of_view() + static_cast< double >(delta) * AngleOfViewPerUs;
     camera_.angle_of_view(angle_of_view);
+}
+
+void View::print(std::ostringstream* oss) const
+{
+    Vector3 angle(angle());
+    *oss << "{";
+    *oss << static_cast< int >(angle.x);
+    *oss << ", ";
+    *oss << static_cast< int >(angle.y);
+    *oss << ", ";
+    *oss << static_cast< int >(angle.z);
+    *oss << "}";
 }
 
 void View::rotate(const Vector3& diff)

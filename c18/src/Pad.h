@@ -19,6 +19,7 @@ public:
         A,
         B,
         Option,
+        Option2,
         Reset,
         Terminate,
     };

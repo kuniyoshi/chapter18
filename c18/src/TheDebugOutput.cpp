@@ -3,6 +3,7 @@
 #include "GameLib/Framework.h"
 #include "Robo.h"
 #include "Triangle.h"
+#include "View.h"
 
 int TheDebugOutput::row = 0;
 
@@ -63,3 +64,4 @@ void TheDebugOutput::print(const T& some)
 
 template void TheDebugOutput::print(const Robo&);
 template void TheDebugOutput::print(const Triangle&);
+template void TheDebugOutput::print(const View&);

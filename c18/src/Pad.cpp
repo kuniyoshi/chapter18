@@ -26,6 +26,7 @@ char key_at(Pad::Input input)
         case Pad::A:                key = 'n'; break;
         case Pad::B:                key = ' '; break;
         case Pad::Option:           key = 'y'; break;
+        case Pad::Option2:          key = 'u'; break;
         case Pad::Reset:            key = 'r'; break;
         case Pad::Terminate:        key = 't'; break;
     }

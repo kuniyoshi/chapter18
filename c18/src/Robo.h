@@ -18,6 +18,7 @@ using GraphicsDatabase::Vector3;
 class Robo
 {
 private:
+    const std::string id_;
     Model* model_;
     Vector3 force_;
     Vector3 velocity_;
@@ -28,6 +29,8 @@ private:
 public:
     Robo(const std::string& id);
     ~Robo();
+    const std::string& id() const;
+    int int_id() const;
     const Vector3* force() const;
     void force(const Vector3& new_value);
     const Vector3* velocity() const;
@@ -40,6 +43,7 @@ public:
     Cuboid cuboid() const;
     void commit_next_position();
     void draw(const View& view) const;
+    void fire_bullet(const Vector3& angle);
     void print(std::ostringstream* oss) const;
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);

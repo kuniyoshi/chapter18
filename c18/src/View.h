@@ -1,5 +1,6 @@
 #ifndef ROBOF__VIEW_H_
 #define ROBOF__VIEW_H_
+#include <sstream>
 #include "GraphicsDatabase/Camera.h"
 #include "GraphicsDatabase/Vector3.h"
 
@@ -20,10 +21,12 @@ public:
     ~View();
     double near_clip() const;
     double far_clip() const;
+    Vector3 angle() const;
     void decrease_angle_of_view(int a);
     void follow(const Robo& robo);
-    void increase_angle_of_view(int a);
     Matrix44 get_perspective_matrix() const;
+    void increase_angle_of_view(int a);
+    void print(std::ostringstream* oss) const;
     void rotate(const Vector3& diff);
 };
 
