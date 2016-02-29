@@ -162,6 +162,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Ai\TheArmoury.cpp" />
+    <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Cuboid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Pad.cpp" />
@@ -178,6 +180,8 @@
     <ClCompile Include="src\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Ai\TheArmoury.h" />
+    <ClInclude Include="src\Bullet.h" />
     <ClInclude Include="src\Cuboid.h" />
     <ClInclude Include="src\Pad.h" />
     <ClInclude Include="src\Robo.h" />

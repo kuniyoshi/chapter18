@@ -16,6 +16,12 @@
     <Filter Include="リソース ファイル\image">
       <UniqueIdentifier>{d521ef23-3106-474e-b424-8bfc21e0f8f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Ai">
+      <UniqueIdentifier>{965a721b-1126-4a0d-b48b-ebba1b132b51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Ai">
+      <UniqueIdentifier>{6c80379f-7b4f-4028-ab69-571166588fd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -60,6 +66,12 @@
     <ClCompile Include="src\Pad.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ai\TheArmoury.cpp">
+      <Filter>ソース ファイル\Ai</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bullet.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Robo.h">
@@ -99,6 +111,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="src\Pad.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ai\TheArmoury.h">
+      <Filter>ヘッダー ファイル\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
