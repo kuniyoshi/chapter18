@@ -1,7 +1,5 @@
-#include <sstream>
 #include "GameLib/Framework.h"
 #include "GraphicsDatabase/Vector3.h"
-#include "Cuboid.h"
 #include "Pad.h"
 #include "Robo.h"
 #include "TheCollision.h"
