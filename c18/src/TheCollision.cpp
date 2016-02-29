@@ -150,6 +150,21 @@ void TheCollision::by_sphere(Robo* robo)
     robo->velocity(v);
 }
 
+namespace
+{
+
+bool does_theta_greater_than_90(const Vector3& a, const Vector3& b)
+{
+    Vector3 normalized_a(a);
+    normalized_a.normalize(1.0);
+    Vector3 normalized_b(b);
+    normalized_b.normalize(1.0);
+    normalized_a.add(normalized_b);
+    return normalized_a.squared_length() < 2.0;
+}
+
+} // namespace -
+
 void TheCollision::by_sphere(Robo* robo, const Robo* opponent)
 {
     Sphere rs(robo->sphere()); // robo sphere
@@ -164,6 +179,12 @@ void TheCollision::by_sphere(Robo* robo, const Robo* opponent)
 
     Vector3 to_the_opponent(*(os.balance()));
     to_the_opponent.subtract(*(rs.balance()));
+
+    if (does_theta_greater_than_90(d, to_the_opponent))
+    {
+        return;
+    }
+
     double length = to_the_opponent.length();
     to_the_opponent.multiply(to_the_opponent.dot(d));
     to_the_opponent.divide(length * length);
