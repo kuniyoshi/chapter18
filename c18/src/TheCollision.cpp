@@ -17,13 +17,13 @@ void TheCollision::slide_next_move_if_collision_will_occur(Robo* robo)
 }
 
 void TheCollision::slide_next_move_if_collision_will_occur( Robo* robo,
-                                                            Robo* opponent)
+                                                            const Robo* opponent)
 {
     by_sphere(robo, opponent);
 }
 
 void TheCollision::slide_next_move_if_collision_will_occur( Robo* robo,
-                                                            Wall* wall)
+                                                            const Wall* wall)
 {
     by_segment(robo, wall);
 }
@@ -77,7 +77,7 @@ void TheCollision::by_cuboid(Robo* robo)
     }
 }
 
-void TheCollision::by_cuboid(Robo* robo, Robo* opponent)
+void TheCollision::by_cuboid(Robo* robo, const Robo* opponent)
 {
     Vector3 delta_next_position;
     Vector3 velocity;
@@ -150,7 +150,7 @@ void TheCollision::by_sphere(Robo* robo)
     robo->velocity(v);
 }
 
-void TheCollision::by_sphere(Robo* robo, Robo* opponent)
+void TheCollision::by_sphere(Robo* robo, const Robo* opponent)
 {
     Sphere rs(robo->sphere()); // robo sphere
     Sphere os(opponent->sphere()); // opponent sphere
@@ -259,7 +259,7 @@ void TheCollision::by_segment(Robo* robo)
     robo_to_triangles(robo, triangles);
 }
 
-void TheCollision::by_segment(Robo* robo, Wall* wall)
+void TheCollision::by_segment(Robo* robo, const Wall* wall)
 {
     std::vector< Triangle > triangles = wall->triangles();
     robo_to_triangles(robo, triangles);
