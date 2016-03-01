@@ -334,9 +334,9 @@ std::vector< Segment > Robo::segments() const
     segments.push_back(Segment(x0, x1));
 
     Vector3 y0(balance);
-    y0.y = y0.y - 0.88;
+    y0.y = y0.y - 1.0;
     Vector3 y1(balance);
-    y1.y = y1.y + 0.88;
+    y1.y = y1.y + 1.0;
     segments.push_back(Segment(y0, y1));
 
     Vector3 z0(balance);
