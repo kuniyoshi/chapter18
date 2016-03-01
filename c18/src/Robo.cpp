@@ -252,8 +252,13 @@ void Robo::draw(const View& view) const
 
 void Robo::fire_bullet(const Vector3& angle)
 {
-    Vector3 modified_angle(-angle.x, -angle.y, -angle.z);
-    modified_angle.multiply(0.3); // TODO: need logic
+    // Vector3 modified_angle(-angle.x, -angle.y, -angle.z);
+    // modified_angle.multiply(0.3); // TODO: need logic
+    // modified_angle.y = modified_angle.y + angle_zx_;
+    Matrix44 rotation;
+    rotation.rotate(Vector3(0.0, angle_zx_, 0.0));
+    Vector3 modified_angle(angle.x, 0.0, 0.0);
+    rotation.multiply(&modified_angle);
     modified_angle.y = modified_angle.y + angle_zx_;
     Ai::TheArmoury::instance().fire(*this, *model_->position(), modified_angle);
 }
