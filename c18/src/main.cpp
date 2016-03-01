@@ -181,7 +181,7 @@ void Framework::update()
     g_opponent->commit_next_position();
 
     TheDebugOutput::print(*g_robo);
-    // TheDebugOutput::print(*g_view);
+    TheDebugOutput::print(*g_view);
 
     g_robo->draw(*g_view);
     g_opponent->draw(*g_view);
