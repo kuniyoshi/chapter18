@@ -13,8 +13,9 @@ using GraphicsDatabase::Vector3;
 namespace
 {
 
-const unsigned MaxAge = 10000;
-const double Scale = 0.1;
+const unsigned MaxAge   = 10000;
+const double Scale      = 0.1;
+const double MeterPerUs = 100 / 1.0e3;
 
 } // namespace -
 
@@ -75,7 +76,7 @@ void Bullet::update()
     unsigned delta = TheTime::instance().delta();
     age_ = age_ + delta;
     Vector3 delta_point(direction_);
-    delta_point.multiply(static_cast< double >(delta) / 1.0e3);
+    delta_point.multiply(static_cast< double >(delta) * MeterPerUs);
     current_point_.add(delta_point);
 
     if (age_ > MaxAge)
