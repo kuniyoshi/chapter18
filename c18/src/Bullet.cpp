@@ -14,7 +14,7 @@ namespace
 {
 
 const unsigned MaxAge   = 10000;
-const double Scale      = 0.1;
+const double Scale      = 0.2;
 const double MeterPerUs = 100 / 1.0e3;
 
 } // namespace -
