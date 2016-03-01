@@ -77,8 +77,8 @@ void clear_globals()
 {
     TheTime::destroy();
     TheHorizon::destroy();
-    TheDatabase::destroy();
     Ai::TheArmoury::destroy();
+    TheDatabase::destroy();
     SAFE_DELETE(g_view);
     SAFE_DELETE(g_robo);
     SAFE_DELETE(g_opponent);
