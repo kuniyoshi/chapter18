@@ -26,7 +26,7 @@ public:
     void draw(const View& view) const;
     bool fire(  const Robo& robo,
                 const Vector3& from,
-                const Vector3& direction) const;
+                const Vector3& angle) const;
     void update() const;
 };
 
