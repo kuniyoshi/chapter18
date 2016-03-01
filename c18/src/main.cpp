@@ -123,7 +123,7 @@ void Framework::update()
 
     if (pad.isOn(Pad::A))
     {
-        g_robo->fire_bullet(g_view->angle());
+        g_robo->fire_bullet(*g_view->angle());
     }
 
     if (pad.isOn(Pad::B))

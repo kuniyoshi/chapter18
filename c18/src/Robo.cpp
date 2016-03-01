@@ -254,6 +254,31 @@ void Robo::draw(const View& view) const
     model_->draw(view.get_perspective_matrix());
 }
 
+namespace
+{
+
+double normalize_angle(double angle)
+{
+    if (angle > 180.0)
+    {
+        angle = angle - 360.0;
+    }
+    else if (angle < -180.0)
+    {
+        angle = angle + 360.0;
+    }
+    return angle;
+}
+
+void normalize_angle(Vector3* angle)
+{
+    angle->x = normalize_angle(angle->x);
+    angle->y = normalize_angle(angle->y);
+    angle->z = normalize_angle(angle->z);
+}
+
+} // namespace -
+
 void Robo::fire_bullet(const Vector3& angle)
 {
     if (weapon_state_ != WeaponStateReady)
@@ -261,14 +286,8 @@ void Robo::fire_bullet(const Vector3& angle)
         return;
     }
 
-    // Vector3 modified_angle(-angle.x, -angle.y, -angle.z);
-    // modified_angle.multiply(0.3); // TODO: need logic
-    // modified_angle.y = modified_angle.y + angle_zx_;
-    Matrix44 rotation;
-    rotation.rotate(Vector3(0.0, angle_zx_, 0.0));
-    Vector3 modified_angle(angle.x, 0.0, 0.0);
-    rotation.multiply(&modified_angle);
-    modified_angle.y = modified_angle.y + angle_zx_;
+    Vector3 modified_angle(angle.x, angle_zx_, 0.0);
+    normalize_angle(&modified_angle);
     Ai::TheArmoury::instance().fire(*this, *model_->position(), modified_angle);
 
     weapon_state_ = WeaponStateCharging;

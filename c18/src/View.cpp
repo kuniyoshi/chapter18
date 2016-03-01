@@ -42,11 +42,9 @@ double View::near_clip() const { return camera_.near_clip(); }
 
 double View::far_clip() const { return camera_.far_clip(); }
 
-Vector3 View::angle() const
+const Vector3* View::angle() const
 {
-    Vector3 angle(*(camera_.angle()));
-    angle.add(delta_angle_);
-    return angle;
+    return camera_.angle();
 }
 
 void View::decrease_angle_of_view(int a)
@@ -98,13 +96,20 @@ void View::increase_angle_of_view(int a)
 
 void View::print(std::ostringstream* oss) const
 {
-    Vector3 angle(angle());
+    Vector3 camera_angle(*camera_.angle());
     *oss << "{";
-    *oss << static_cast< int >(angle.x);
+    *oss << static_cast< int >(camera_angle.x);
     *oss << ", ";
-    *oss << static_cast< int >(angle.y);
+    *oss << static_cast< int >(camera_angle.y);
     *oss << ", ";
-    *oss << static_cast< int >(angle.z);
+    *oss << static_cast< int >(camera_angle.z);
+    *oss << "}, ";
+    *oss << "{";
+    *oss << static_cast< int >(delta_angle_.x);
+    *oss << ", ";
+    *oss << static_cast< int >(delta_angle_.y);
+    *oss << ", ";
+    *oss << static_cast< int >(delta_angle_.z);
     *oss << "}";
 }
 
