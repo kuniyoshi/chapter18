@@ -71,7 +71,7 @@ int count_bullet(int id, const Bullet* bullets)
 
 bool Impl::fire(    const Robo& robo,
                     const Vector3& from,
-                    const Vector3& direction)
+                    const Vector3& angle)
 {
     int count = count_bullet(robo.int_id(), bullets_);
 
@@ -89,7 +89,7 @@ bool Impl::fire(    const Robo& robo,
             continue;
         }
 
-        bullets_[i].initialize(robo.int_id(), from, direction);
+        bullets_[i].initialize(robo.int_id(), from, angle);
         did_fire = true;
         break;
     }
