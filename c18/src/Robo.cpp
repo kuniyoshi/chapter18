@@ -39,6 +39,8 @@ const double DirectionCoefBack = 0.6;
 
 const int AngleScale = 3;
 
+const unsigned ChargingUs = 200;
+
 } // namespae -
 
 Robo::Robo(const std::string& id)
@@ -48,7 +50,9 @@ Robo::Robo(const std::string& id)
     velocity_(),
     delta_next_position_(),
     angle_zx_(0.0),
-    mass_(TheMass)
+    mass_(TheMass),
+    weapon_state_(WeaponStateReady),
+    state_counter_(0)
 {
     TheDatabase::instance().create(id_, "robo");
     model_ = TheDatabase::instance().find(id_);
@@ -252,6 +256,11 @@ void Robo::draw(const View& view) const
 
 void Robo::fire_bullet(const Vector3& angle)
 {
+    if (weapon_state_ != WeaponStateReady)
+    {
+        return;
+    }
+
     // Vector3 modified_angle(-angle.x, -angle.y, -angle.z);
     // modified_angle.multiply(0.3); // TODO: need logic
     // modified_angle.y = modified_angle.y + angle_zx_;
@@ -261,6 +270,8 @@ void Robo::fire_bullet(const Vector3& angle)
     rotation.multiply(&modified_angle);
     modified_angle.y = modified_angle.y + angle_zx_;
     Ai::TheArmoury::instance().fire(*this, *model_->position(), modified_angle);
+
+    weapon_state_ = WeaponStateCharging;
 }
 
 void Robo::print(std::ostringstream* oss) const
@@ -345,6 +356,42 @@ void Robo::set_model_angle_zx(double new_value)
     model_->angle(angle);
 }
 
+void Robo::update()
+{
+    set_delta_next_position();
+    charge_weapon();
+}
+
+Sphere Robo::sphere() const
+{
+    Vector3 next_position(*(model_->position()));
+    next_position.add(delta_next_position_);
+    return Sphere(next_position, 1.0); // Cheating.  This is defined at json
+}
+
+void Robo::warp(const Vector3& to)
+{
+    model_->position(to);
+}
+
+void Robo::charge_weapon()
+{
+    if (weapon_state_ == WeaponStateReady)
+    {
+        state_counter_ = 0;
+        return;
+    }
+
+    unsigned delta = TheTime::instance().delta();
+    state_counter_ = state_counter_ + delta;
+
+    if (state_counter_ > ChargingUs)
+    {
+        weapon_state_ = WeaponStateReady;
+        state_counter_ = 0;
+    }
+}
+
 void Robo::set_delta_next_position()
 {
     TheTime t = TheTime::instance();
@@ -380,16 +427,4 @@ void Robo::set_delta_next_position()
     delta_next_position_ = delta;
 
     force_.set(0.0, -GravityAcceleration * mass_, 0.0);
-}
-
-Sphere Robo::sphere() const
-{
-    Vector3 next_position(*(model_->position()));
-    next_position.add(delta_next_position_);
-    return Sphere(next_position, 1.0); // Cheating.  This is defined at json
-}
-
-void Robo::warp(const Vector3& to)
-{
-    model_->position(to);
 }

@@ -17,6 +17,13 @@ using GraphicsDatabase::Vector3;
 
 class Robo
 {
+public:
+    enum WeaponState
+    {
+        WeaponStateReady,
+        WeaponStateCharging,
+    };
+
 private:
     const std::string id_;
     Model* model_;
@@ -25,6 +32,8 @@ private:
     Vector3 delta_next_position_;
     double angle_zx_;
     double mass_;
+    WeaponState weapon_state_;
+    unsigned state_counter_;
 
 public:
     Robo(const std::string& id);
@@ -50,9 +59,13 @@ public:
     Segment segment() const;
     std::vector< Segment > segments() const;
     void set_model_angle_zx(double new_value);
-    void set_delta_next_position();
     Sphere sphere() const;
+    void update();
     void warp(const Vector3& to);
+
+private:
+    void charge_weapon();
+    void set_delta_next_position();
 };
 
 #endif

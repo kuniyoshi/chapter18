@@ -169,8 +169,8 @@ void Framework::update()
 
     Ai::TheArmoury::instance().update();
 
-    g_robo->set_delta_next_position();
-    g_opponent->set_delta_next_position();
+    g_robo->update();
+    g_opponent->update();
     TheCollision::slide_next_move_if_collision_will_occur(g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_opponent);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_wall);
