@@ -16,45 +16,69 @@ namespace
 const unsigned MaxAge   = 10000;
 const double Scale      = 0.2;
 const double MeterPerUs = 100 / 1.0e3;
+const double GravityAcceleration    = 9.8;
+const double Speed0     = 50.0;
+const double SpeedMax   = 60.0;
+// const double Speed0     = 115.0;
+// const double SpeedMax   = 295.0;
+const unsigned BoostAfter   = 2 * 1000;
+// const unsigned BoostAfter   = 10 * 1000;
+const double BoostS         = 1.0;
+// const double BoostS         = 2.0;
+const unsigned BoostMs      = static_cast< unsigned >(BoostS * 1000);
+const double DeltaSpeed     = (SpeedMax - Speed0) / BoostS;
+
+double calc_delta_speed(unsigned from, unsigned dt)
+{
+    if (from + dt < BoostAfter)
+    {
+        return 0.0;
+    }
+    else if (from + dt > BoostAfter + BoostMs)
+    {
+        return 0.0;
+    }
+
+    // ignore the case that
+    // from < BoostAfter; from + dt > BoostAfter
+
+    return DeltaSpeed * dt / 1e3;
+}
 
 } // namespace -
 
 Bullet::Bullet()
-:   id_(-1), age_(0), is_owned_(false), current_point_(), direction_()
+:   owner_id_(-1), age_(0),
+    current_point_(), velocity_()
 {}
 
 Bullet::~Bullet() {}
 
 void Bullet::initialize(int id, const Vector3& from, const Vector3& angle)
 {
-    id_ = id;
+    assert(id >= 0);
+    owner_id_ = id;
     age_ = 0;
-    is_owned_ = true;
     current_point_ = from;
     Matrix44 rotation;
     rotation.rotate(angle);
-    direction_ = Vector3(0.0, 0.0, 1.0);
-    rotation.multiply(&direction_);
-    // direction_ = Vector3(0.0, 0.0, -1.0);
+    velocity_ = Vector3(0.0, 0.0, Speed0);
+    rotation.multiply(&velocity_);
 }
-
-bool Bullet::is_owned() const { return is_owned_; }
 
 Vector3 Bullet::angle() const
 {
-    assert(is_owned_);
+    assert(is_owned());
     Vector3 angle;
-    angle.x = GameLib::atan2(direction_.z, direction_.y);
-    angle.y = GameLib::atan2(direction_.x, direction_.z);
-    angle.z = GameLib::atan2(direction_.y, direction_.x);
+    angle.x = GameLib::atan2(velocity_.z, velocity_.y);
+    angle.y = GameLib::atan2(velocity_.x, velocity_.z);
+    angle.z = GameLib::atan2(velocity_.y, velocity_.x);
     return angle;
 }
 
-bool Bullet::is_owned_by(int id) const { return id == id_; }
-
 void Bullet::draw(const View& view) const
 {
-    if (!is_owned_)
+    if (!is_owned())
     {
         return;
     }
@@ -66,21 +90,50 @@ void Bullet::draw(const View& view) const
     model->draw(view.get_perspective_matrix());
 }
 
+bool Bullet::is_owned() const { return owner_id_ >= 0; }
+
+bool Bullet::is_owned_by(int id) const { return id == owner_id_; }
+
+namespace
+{
+
+void increase_velocity( Vector3* velocity,
+                        const Vector3& current_angle,
+                        unsigned age,
+                        unsigned dt)
+{
+    double ds = calc_delta_speed(age, dt);
+    Vector3 delta(0.0, 0.0, ds);
+    Matrix44 rotation;
+    rotation.rotate(current_angle);
+    rotation.rotate(delta);
+    velocity->add(delta);
+}
+
+} // namespace -
+
 void Bullet::update()
 {
-    if (!is_owned_)
+    if (!is_owned())
     {
         return;
     }
 
-    unsigned delta = TheTime::instance().delta();
-    age_ = age_ + delta;
-    Vector3 delta_point(direction_);
-    delta_point.multiply(static_cast< double >(delta) * MeterPerUs);
-    current_point_.add(delta_point);
+    unsigned dt = TheTime::instance().delta();
+    increase_velocity(&velocity_, angle(), age_, dt);
+
+    velocity_.y = velocity_.y
+    - GravityAcceleration * static_cast< double >(dt) / 1e3;
+
+    age_ = age_ + dt;
+
+    Vector3 delta(velocity_);
+    delta.multiply(static_cast< double >(dt) / 1e3);
+
+    current_point_.add(delta);
 
     if (age_ > MaxAge)
     {
-        is_owned_ = false;
+        owner_id_ = -1;
     }
 }
