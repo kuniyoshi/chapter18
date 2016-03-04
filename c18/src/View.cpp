@@ -17,9 +17,9 @@ namespace
 const Vector3 FollowPoint(0.0, 1.2, -1.2);
 const Vector3 FirstPosition(0.0, 1.6, 0.0);
 const Vector3 FirstAngle(0.0, 180.0, 0.0);
-const Vector3 AnglePerUs(0.1, 0.1, 0.1);
+const Vector3 AnglePerMs(0.1, 0.1, 0.1);
 const double AngleOfView        = 90.0;
-const double AngleOfViewPerUs   = 0.10;
+const double AngleOfViewPerMs   = 0.10;
 
 } // namespace -
 
@@ -51,7 +51,7 @@ void View::decrease_angle_of_view(int a)
 {
     unsigned delta = TheTime::instance().delta();
     double angle_of_view
-    = camera_.angle_of_view() - static_cast< double >(delta) * AngleOfViewPerUs;
+    = camera_.angle_of_view() - static_cast< double >(delta) * AngleOfViewPerMs;
     camera_.angle_of_view(angle_of_view);
 }
 
@@ -90,7 +90,7 @@ void View::increase_angle_of_view(int a)
 {
     unsigned delta = TheTime::instance().delta();
     double angle_of_view
-    = camera_.angle_of_view() + static_cast< double >(delta) * AngleOfViewPerUs;
+    = camera_.angle_of_view() + static_cast< double >(delta) * AngleOfViewPerMs;
     camera_.angle_of_view(angle_of_view);
 }
 
@@ -117,7 +117,7 @@ void View::rotate(const Vector3& diff)
 {
     Vector3 angle(diff);
     unsigned delta = TheTime::instance().delta();
-    angle.hadamard_product(AnglePerUs);
+    angle.hadamard_product(AnglePerMs);
     angle.multiply(static_cast< double >(delta));
     delta_angle_.add(angle);
 }
