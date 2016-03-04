@@ -39,7 +39,7 @@ const double DirectionCoefBack = 0.6;
 
 const int AngleScale = 3;
 
-const unsigned ChargingUs = 200;
+const unsigned ChargingMs = 200;
 
 } // namespae -
 
@@ -404,7 +404,7 @@ void Robo::charge_weapon()
     unsigned delta = TheTime::instance().delta();
     state_counter_ = state_counter_ + delta;
 
-    if (state_counter_ > ChargingUs)
+    if (state_counter_ > ChargingMs)
     {
         weapon_state_ = WeaponStateReady;
         state_counter_ = 0;
