@@ -279,7 +279,7 @@ void normalize_angle(Vector3* angle)
 
 } // namespace -
 
-void Robo::fire_bullet(const Vector3& angle)
+void Robo::fire_bullet(const Vector3& angle, const Robo* opponent)
 {
     if (weapon_state_ != WeaponStateReady)
     {
@@ -288,7 +288,10 @@ void Robo::fire_bullet(const Vector3& angle)
 
     Vector3 modified_angle(angle.x, angle_zx_, 0.0);
     normalize_angle(&modified_angle);
-    Ai::TheArmoury::instance().fire(*this, *model_->position(), modified_angle);
+    Ai::TheArmoury::instance().fire(    *this,
+                                        *model_->position(),
+                                        modified_angle,
+                                        opponent);
 
     weapon_state_ = WeaponStateCharging;
 }

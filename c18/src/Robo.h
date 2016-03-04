@@ -52,7 +52,7 @@ public:
     Cuboid cuboid() const;
     void commit_next_position();
     void draw(const View& view) const;
-    void fire_bullet(const Vector3& angle);
+    void fire_bullet(const Vector3& angle, const Robo* opponent);
     void print(std::ostringstream* oss) const;
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);
