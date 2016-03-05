@@ -51,6 +51,7 @@ Robo::Robo(const std::string& id)
     delta_next_position_(),
     angle_zx_(0.0),
     mass_(TheMass),
+    view_(0),
     weapon_state_(WeaponStateReady),
     state_counter_(0),
     is_locking_on_(false),
@@ -64,6 +65,7 @@ Robo::Robo(const std::string& id)
 Robo::~Robo()
 {
     model_ = 0; // will be deleted by the database
+    SAFE_DELETE(view_);
 }
 
 const std::string& Robo::id() const { return id_; }
@@ -115,6 +117,14 @@ void Robo::delta_next_position(const Vector3& new_value)
 }
 
 double Robo::angle_zx() const { return angle_zx_; }
+
+void Robo::view(int width, int height, double near_clip, double far_clip)
+{
+    ASSERT(!view_);
+    view_ = new View(width, height, near_clip, far_clip);
+}
+
+View* Robo::view() const { return view_; }
 
 namespace
 {
@@ -281,12 +291,14 @@ void normalize_angle(Vector3* angle)
 
 } // namespace -
 
-void Robo::fire_bullet(const Vector3& angle, const Robo* opponent)
+void Robo::fire_bullet(const Robo* opponent)
 {
     if (weapon_state_ != WeaponStateReady)
     {
         return;
     }
+
+    const Vector3& angle = *view_->angle();
 
     Vector3 modified_angle(angle.x, angle_zx_, 0.0);
     normalize_angle(&modified_angle);
@@ -387,11 +399,12 @@ void Robo::set_model_angle_zx(double new_value)
     model_->angle(angle);
 }
 
-void Robo::update(const Robo& opponent, const View& view)
+void Robo::update(const Robo& opponent)
 {
-    lock_on(opponent, view);
+    lock_on(opponent);
     set_delta_next_position();
     charge_weapon();
+    view_->follow(*this);
 }
 
 Sphere Robo::sphere() const
@@ -448,11 +461,11 @@ bool is_sighting(   const Vector3& self_point,
 
 } // namespace -
 
-void Robo::lock_on(const Robo& opponent, const View& view)
+void Robo::lock_on(const Robo& opponent)
 {
     Vector3 direction(0.0, 0.0, -1.0);
     Matrix44 rotation;
-    rotation.rotate(*view.angle());
+    rotation.rotate(*view_->angle());
     rotation.multiply(&direction);
 
     if (!is_sighting(*center(), *opponent.center(), direction))

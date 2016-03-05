@@ -20,7 +20,6 @@ namespace GameLib
 const double NearClip   = 0.5;
 const double FarClip    = 1000.0;
 
-View* g_view = 0;
 Robo* g_robo = 0;
 Robo* g_opponent = 0;
 Wall* g_wall = 0;
@@ -47,23 +46,22 @@ void make_sure_globals_are()
         Ai::TheArmoury::create();
     }
 
-    if (!g_view)
-    {
-        GameLib::Framework f = GameLib::Framework::instance();
-        g_view = new View(f.width(), f.height(), NearClip, FarClip);
-    }
+    GameLib::Framework f = GameLib::Framework::instance();
 
     if (!g_robo)
     {
+
         g_robo = new Robo("myrobo");
         g_robo->warp(Vector3(0.0, 10.0, -1.0));
         g_robo->set_model_angle_zx(180.0);
+        g_robo->view(f.width(), f.height(), NearClip, FarClip);
     }
 
     if (!g_opponent)
     {
         g_opponent = new Robo("opponent");
         g_opponent->warp(Vector3(0.0, 10.0, -20));
+        g_opponent->view(f.width(), f.height(), NearClip, FarClip);
     }
 
     if (!g_wall)
@@ -79,7 +77,6 @@ void clear_globals()
     TheHorizon::destroy();
     Ai::TheArmoury::destroy();
     TheDatabase::destroy();
-    SAFE_DELETE(g_view);
     SAFE_DELETE(g_robo);
     SAFE_DELETE(g_opponent);
     SAFE_DELETE(g_wall);
@@ -123,7 +120,7 @@ void Framework::update()
 
     if (pad.isOn(Pad::A))
     {
-        g_robo->fire_bullet(*g_view->angle(), g_opponent);
+        g_robo->fire_bullet(g_opponent);
     }
 
     if (pad.isOn(Pad::B))
@@ -141,7 +138,6 @@ void Framework::update()
         g_robo->rotate_zx(1);
     }
 
-    g_view->follow(*g_robo);
 
     Vector3 angle_diff;
 
@@ -164,13 +160,13 @@ void Framework::update()
 
     if (angle_diff.length() > 0)
     {
-        g_view->rotate(angle_diff);
+        g_robo->view()->rotate(angle_diff);
     }
 
     Ai::TheArmoury::instance().update();
 
-    g_robo->update(*g_opponent, *g_view);
-    g_opponent->update(*g_robo, *g_view);
+    g_robo->update(*g_opponent);
+    g_opponent->update(*g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_opponent);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_wall);
@@ -181,13 +177,13 @@ void Framework::update()
     g_opponent->commit_next_position();
 
     TheDebugOutput::print(*g_robo);
-    TheDebugOutput::print(*g_view);
+    TheDebugOutput::print(*g_robo->view());
 
-    g_robo->draw(*g_view);
-    g_opponent->draw(*g_view);
-    TheHorizon::instance().draw(*g_view);
-    g_wall->draw(*g_view);
-    Ai::TheArmoury::instance().draw(*g_view);
+    g_robo->draw(*g_robo->view());
+    g_opponent->draw(*g_robo->view());
+    TheHorizon::instance().draw(*g_robo->view());
+    g_wall->draw(*g_robo->view());
+    Ai::TheArmoury::instance().draw(*g_robo->view());
 
     if (pad.isOn(Pad::Reset))
     {

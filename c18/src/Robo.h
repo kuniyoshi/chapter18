@@ -32,6 +32,7 @@ private:
     Vector3 delta_next_position_;
     double angle_zx_;
     double mass_;
+    View* view_;
     WeaponState weapon_state_;
     unsigned state_counter_;
     bool is_locking_on_;
@@ -40,6 +41,7 @@ private:
 public:
     Robo(const std::string& id);
     ~Robo();
+
     const std::string& id() const;
     int int_id() const;
     const Vector3* force() const;
@@ -49,12 +51,15 @@ public:
     const Vector3* delta_next_position() const;
     void delta_next_position(const Vector3& new_value);
     double angle_zx() const;
+    void view(int height, int width, double near_clip, double far_clip);
+    View* view() const;
+
     void boost(const Vector3& direction);
     const Vector3* center() const;
     Cuboid cuboid() const;
     void commit_next_position();
     void draw(const View& view) const;
-    void fire_bullet(const Vector3& angle, const Robo* opponent);
+    void fire_bullet(const Robo* opponent);
     void print(std::ostringstream* oss) const;
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);
@@ -62,11 +67,11 @@ public:
     std::vector< Segment > segments() const;
     void set_model_angle_zx(double new_value);
     Sphere sphere() const;
-    void update(const Robo& opponent, const View& view);
+    void update(const Robo& opponent);
     void warp(const Vector3& to);
 
 private:
-    void lock_on(const Robo& opponent, const View& view);
+    void lock_on(const Robo& opponent);
     void charge_weapon();
     void set_delta_next_position();
 };
