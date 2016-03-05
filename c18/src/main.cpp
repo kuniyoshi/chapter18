@@ -6,6 +6,8 @@
 #include "TheCollision.h"
 #include "TheDatabase.h"
 #include "TheDebugOutput.h"
+#include "TheEnvironment.h"
+#include "TheFrontend.h"
 #include "TheHorizon.h"
 #include "TheTime.h"
 #include "View.h"
@@ -80,6 +82,7 @@ void clear_globals()
     SAFE_DELETE(g_robo);
     SAFE_DELETE(g_opponent);
     SAFE_DELETE(g_wall);
+    TheEnvironment::RemainedBattleMs = TheEnvironment::MaxBattleMs;
 }
 
 void Framework::update()
@@ -179,11 +182,14 @@ void Framework::update()
     TheDebugOutput::print(*g_robo);
     TheDebugOutput::print(*g_robo->view());
 
+    TheEnvironment::tick();
+
     g_robo->draw(*g_robo->view());
     g_opponent->draw(*g_robo->view());
     TheHorizon::instance().draw(*g_robo->view());
     g_wall->draw(*g_robo->view());
     Ai::TheArmoury::instance().draw(*g_robo->view());
+    TheFrontend::draw();
 
     if (pad.isOn(Pad::Reset))
     {
