@@ -293,7 +293,7 @@ void Robo::fire_bullet(const Vector3& angle, const Robo* opponent)
     Ai::TheArmoury::instance().fire(    *this,
                                         *model_->position(),
                                         modified_angle,
-                                        opponent);
+                                        is_locking_on_ ? opponent : 0);
 
     weapon_state_ = WeaponStateCharging;
 }
