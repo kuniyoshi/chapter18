@@ -34,6 +34,8 @@ private:
     double mass_;
     WeaponState weapon_state_;
     unsigned state_counter_;
+    bool is_locking_on_;
+    unsigned sighting_ms_;
 
 public:
     Robo(const std::string& id);
@@ -60,10 +62,11 @@ public:
     std::vector< Segment > segments() const;
     void set_model_angle_zx(double new_value);
     Sphere sphere() const;
-    void update();
+    void update(const Robo& opponent, const View& view);
     void warp(const Vector3& to);
 
 private:
+    void lock_on(const Robo& opponent, const View& view);
     void charge_weapon();
     void set_delta_next_position();
 };

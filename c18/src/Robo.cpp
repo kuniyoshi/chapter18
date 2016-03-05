@@ -52,7 +52,9 @@ Robo::Robo(const std::string& id)
     angle_zx_(0.0),
     mass_(TheMass),
     weapon_state_(WeaponStateReady),
-    state_counter_(0)
+    state_counter_(0),
+    is_locking_on_(false),
+    sighting_ms_(0)
 {
     TheDatabase::instance().create(id_, "robo");
     model_ = TheDatabase::instance().find(id_);
@@ -315,7 +317,14 @@ void Robo::print(std::ostringstream* oss) const
     // *oss << static_cast< int >(velocity_.z * 100);
     // *oss << "}";
 
-    *oss << angle_zx_;
+    if (is_locking_on_)
+    {
+        *oss << "is locking on!";
+    }
+    else
+    {
+        *oss << "NOT locking on...";
+    }
 }
 
 void Robo::rotate_zx(int angle_zx)
@@ -378,8 +387,9 @@ void Robo::set_model_angle_zx(double new_value)
     model_->angle(angle);
 }
 
-void Robo::update()
+void Robo::update(const Robo& opponent, const View& view)
 {
+    lock_on(opponent, view);
     set_delta_next_position();
     charge_weapon();
 }
@@ -394,6 +404,76 @@ Sphere Robo::sphere() const
 void Robo::warp(const Vector3& to)
 {
     model_->position(to);
+}
+
+namespace
+{
+
+// Lock on
+const double MaxDepthCanLockOn      = 100.0;
+const double MinDepthCanLockOn      = 10.0;
+const double HalfThetaAtMaxDepth    = 1.0;
+const double HalfHeightAtMaxDepth
+= MaxDepthCanLockOn * GameLib::tan(HalfThetaAtMaxDepth);
+const double HalfThetaAtMinDepth
+= GameLib::atan2(HalfHeightAtMaxDepth, MinDepthCanLockOn);
+const double HalfHeightAtMinDepth
+= MinDepthCanLockOn * GameLib::tan(HalfThetaAtMinDepth);
+const unsigned MsToCompleteLockOn   = 3000;
+
+double calc_half_theta_at_depth(double depth)
+{
+    return GameLib::atan2(HalfHeightAtMaxDepth, depth);
+}
+
+bool is_sighting(   const Vector3& self_point,
+                    const Vector3& opponent_point,
+                    const Vector3& direction)
+{
+    Vector3 to_opponent(opponent_point);
+    to_opponent.subtract(self_point);
+    double depth = to_opponent.length();
+
+    if (depth < MinDepthCanLockOn || depth > MaxDepthCanLockOn)
+    {
+        return false;
+    }
+
+    double theta = calc_half_theta_at_depth(depth);
+    double cos_theta = direction.dot(to_opponent)
+    / direction.length() / to_opponent.length();
+
+    return cos_theta > GameLib::cos(theta);
+}
+
+} // namespace -
+
+void Robo::lock_on(const Robo& opponent, const View& view)
+{
+    Vector3 direction(0.0, 0.0, -1.0);
+    Matrix44 rotation;
+    rotation.rotate(*view.angle());
+    rotation.multiply(&direction);
+
+    if (!is_sighting(*center(), *opponent.center(), direction))
+    {
+        is_locking_on_ = false;
+        sighting_ms_ = 0;
+        return;
+    }
+
+    if (is_locking_on_)
+    {
+        return;
+    }
+
+    if (sighting_ms_ > MsToCompleteLockOn)
+    {
+        is_locking_on_ = true;
+    }
+
+    unsigned delta = TheTime::instance().delta();
+    sighting_ms_ = sighting_ms_ + delta;
 }
 
 void Robo::charge_weapon()

@@ -169,8 +169,8 @@ void Framework::update()
 
     Ai::TheArmoury::instance().update();
 
-    g_robo->update();
-    g_opponent->update();
+    g_robo->update(*g_opponent, *g_view);
+    g_opponent->update(*g_robo, *g_view);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_opponent);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_wall);
