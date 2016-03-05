@@ -23,7 +23,10 @@ public:
 Impl::Impl()
 :   rate_(1.0),
     delta_(0), now_(0), previous_(0)
-{}
+{
+    GameLib::Framework f = GameLib::Framework::instance();
+    now_ = f.time();
+}
 
 double Impl::rate() const { return rate_; }
 
