@@ -37,6 +37,7 @@ private:
     unsigned state_counter_;
     bool is_locking_on_;
     unsigned sighting_ms_;
+    double energy_;
 
 public:
     Robo(const std::string& id);
@@ -53,7 +54,9 @@ public:
     double angle_zx() const;
     void view(int height, int width, double near_clip, double far_clip);
     View* view() const;
+    double energy() const;
 
+    void absorb_energy();
     void boost(const Vector3& direction);
     const Vector3* center() const;
     Cuboid cuboid() const;

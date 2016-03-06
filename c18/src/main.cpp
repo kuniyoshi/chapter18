@@ -130,6 +130,10 @@ void Framework::update()
     {
         g_robo->boost(move_direction);
     }
+    else
+    {
+        g_robo->absorb_energy();
+    }
 
     if (pad.isOn(Pad::LeftStickRight))
     {

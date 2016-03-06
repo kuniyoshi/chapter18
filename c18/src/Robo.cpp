@@ -41,6 +41,9 @@ const int AngleScale = 3;
 
 const unsigned ChargingMs = 200;
 
+const double AbsorptionEnergyPerMs  = 0.001;
+const double BoostEnergyPerMs       = 0.0004;
+
 } // namespae -
 
 Robo::Robo(const std::string& id)
@@ -55,7 +58,8 @@ Robo::Robo(const std::string& id)
     weapon_state_(WeaponStateReady),
     state_counter_(0),
     is_locking_on_(false),
-    sighting_ms_(0)
+    sighting_ms_(0),
+    energy_(1.0)
 {
     TheDatabase::instance().create(id_, "robo");
     model_ = TheDatabase::instance().find(id_);
@@ -126,6 +130,8 @@ void Robo::view(int width, int height, double near_clip, double far_clip)
 
 View* Robo::view() const { return view_; }
 
+double Robo::energy() const { return energy_; }
+
 namespace
 {
 
@@ -194,8 +200,28 @@ double get_reverse_direction(double a)
 
 } // namespace
 
+void Robo::absorb_energy()
+{
+    unsigned delta = TheTime::instance().delta();
+    energy_ = energy_ + AbsorptionEnergyPerMs * delta;
+
+    if (energy_ >= 1.0)
+    {
+        energy_ = 1.0;
+    }
+}
+
 void Robo::boost(const Vector3& direction)
 {
+    if (energy_ <= 0.0)
+    {
+        absorb_energy();
+        return;
+    }
+
+    unsigned delta = TheTime::instance().delta();
+    energy_ = energy_ - BoostEnergyPerMs * delta;
+
     Vector3 tuned_direction(direction);
     const Vector3* balance = model_->position();
 
