@@ -193,7 +193,7 @@ void Framework::update()
     TheHorizon::instance().draw(*g_robo->view());
     g_wall->draw(*g_robo->view());
     Ai::TheArmoury::instance().draw(*g_robo->view());
-    TheFrontend::draw();
+    TheFrontend::draw(*g_robo);
 
     if (pad.isOn(Pad::Reset))
     {
