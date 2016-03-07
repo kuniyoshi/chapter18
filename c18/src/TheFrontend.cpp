@@ -28,28 +28,26 @@ void draw_rect( pair< double, double > p0,
 
     q0[0] = p0.first;
     q0[1] = p0.second;
-    q0[2] = 0.2;
+    q0[2] = 0.0;
     q0[3] = 1.0;
     q1[0] = p1.first;
     q1[1] = p1.second;
-    q1[2] = 0.2;
+    q1[2] = 0.0;
     q1[3] = 1.0;
     q2[0] = p2.first;
     q2[1] = p2.second;
-    q2[2] = 0.2;
+    q2[2] = 0.0;
     q2[3] = 1.0;
     q3[0] = p3.first;
     q3[1] = p3.second;
-    q3[2] = 0.2;
+    q3[2] = 0.0;
     q3[3] = 1.0;
 
-    double uv0[2] = {0.0, 0.0};
-
     f.drawTriangle3DH(  q0, q1, q2,
-                        uv0, uv0, uv0,
+                        0, 0, 0,
                         c0, c1, c3);
     f.drawTriangle3DH(  q1, q3, q2,
-                        uv0, uv0, uv0,
+                        0, 0, 0,
                         c1, c3, c2);
 }
 
@@ -93,6 +91,7 @@ unsigned calc_gradation_color_non_linear(   unsigned from,
 void TheFrontend::draw(const Robo& player)
 {
     GameLib::Framework f = GameLib::Framework::instance();
+    f.setTexture(0);
     f.setBlendMode(GameLib::Framework::BLEND_LINEAR);
     f.enableDepthTest(true);
     f.enableDepthWrite(false);
