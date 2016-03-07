@@ -3,10 +3,15 @@
 #include <cmath>
 #include <utility>
 #include "GameLib/Framework.h"
+#include "GraphicsDatabase/Matrix44.h"
+#include "GraphicsDatabase/Vector3.h"
 #include "Robo.h"
 #include "TheEnvironment.h"
+#include "View.h"
 
 using std::pair;
+using GraphicsDatabase::Matrix44;
+using GraphicsDatabase::Vector3;
 
 namespace
 {
@@ -19,7 +24,9 @@ void draw_rect( pair< double, double > p0,
                 unsigned c1,
                 unsigned c2,
                 unsigned c3,
-                GameLib::Framework f)
+                GameLib::Framework f,
+                double z = 0.0,
+                double w = 1.0)
 {
     double q0[4];
     double q1[4];
@@ -28,20 +35,20 @@ void draw_rect( pair< double, double > p0,
 
     q0[0] = p0.first;
     q0[1] = p0.second;
-    q0[2] = 0.0;
-    q0[3] = 1.0;
+    q0[2] = z;
+    q0[3] = w;
     q1[0] = p1.first;
     q1[1] = p1.second;
-    q1[2] = 0.0;
-    q1[3] = 1.0;
+    q1[2] = z;
+    q1[3] = w;
     q2[0] = p2.first;
     q2[1] = p2.second;
-    q2[2] = 0.0;
-    q2[3] = 1.0;
+    q2[2] = z;
+    q2[3] = w;
     q3[0] = p3.first;
     q3[1] = p3.second;
-    q3[2] = 0.0;
-    q3[3] = 1.0;
+    q3[2] = z;
+    q3[3] = w;
 
     f.drawTriangle3DH(  q0, q1, q2,
                         0, 0, 0,
@@ -88,7 +95,7 @@ unsigned calc_gradation_color_non_linear(   unsigned from,
 
 } // namespace -
 
-void TheFrontend::draw(const Robo& player)
+void TheFrontend::draw(const Robo& player, const Robo& opponent)
 {
     GameLib::Framework f = GameLib::Framework::instance();
     f.setTexture(0);
@@ -149,4 +156,32 @@ void TheFrontend::draw(const Robo& player)
                 0xeab2a770,
                 0xeab2a770,
                 f);
+
+    // opponent hp
+    Matrix44 transformation(player.view()->get_perspective_matrix());
+    Vector3 opponent_point(*opponent.center());
+    transformation.multiply(&opponent_point);
+
+    const double opponent_hp_bar_left   = opponent_point.x - 0.5;
+    const double opponent_hp_bar_right  = opponent_point.x + 0.5;
+    const double opponent_hp = opponent.hp();
+    const double opponent_current_hp
+    = (opponent_hp_bar_right - opponent_hp_bar_left) * opponent_hp
+    + opponent_hp_bar_left;
+
+    draw_rect(  pair< double, double >( opponent_hp_bar_left,
+                                        opponent_point.y + 1.3),
+                pair< double, double >( opponent_current_hp,
+                                        opponent_point.y + 1.3),
+                pair< double, double >( opponent_hp_bar_left,
+                                        opponent_point.y + 1.1),
+                pair< double, double >( opponent_current_hp,
+                                        opponent_point.y + 1.1),
+                0xeab2a770,
+                0xeab2a770,
+                0xeab2a770,
+                0xeab2a770,
+                f,
+                0.0,
+                opponent_point.w);
 }

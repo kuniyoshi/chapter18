@@ -199,7 +199,7 @@ void Framework::update()
     TheHorizon::instance().draw(*g_robo->view());
     g_wall->draw(*g_robo->view());
     Ai::TheArmoury::instance().draw(*g_robo->view());
-    TheFrontend::draw(*g_robo);
+    TheFrontend::draw(*g_robo, *g_opponent);
 
     if (pad.isOn(Pad::Reset))
     {
