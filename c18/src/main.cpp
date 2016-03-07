@@ -145,6 +145,12 @@ void Framework::update()
         g_robo->rotate_zx(1);
     }
 
+    if (pad.isTriggered(Pad::Option))
+    {
+    }
+    else if (pad.isTriggered(Pad::Option2))
+    {
+    }
 
     Vector3 angle_diff;
 
