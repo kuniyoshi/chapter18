@@ -52,7 +52,7 @@ double calc_delta_speed(unsigned from, unsigned dt)
 } // namespace -
 
 Bullet::Bullet()
-:   owner_id_(-1), age_(0),
+:   owner_id_(-1), age_(0), is_homing_(false),
     current_point_(), velocity_(),
     target_robo_(0)
 {}
@@ -65,11 +65,13 @@ Bullet::~Bullet()
 void Bullet::initialize(    int id,
                             const Vector3& from,
                             const Vector3& angle,
-                            const Robo* opponent)
+                            const Robo* opponent,
+                            bool is_homing)
 {
     assert(id >= 0);
     owner_id_ = id;
     age_ = 0;
+    is_homing_ = is_homing;
     current_point_ = from;
     Matrix44 rotation;
     rotation.rotate(angle);
@@ -186,7 +188,7 @@ void Bullet::update()
 
     current_point_.add(delta);
 
-    if (target_robo_)
+    if (is_homing_)
     {
         fix_velocity_cause_of_thruster( &velocity_,
                                         current_point_,

@@ -28,7 +28,8 @@ public:
     bool fire(  const Robo& robo,
                 const Vector3& from,
                 const Vector3& direction,
-                const Robo* opponent);
+                const Robo* opponent,
+                const bool is_locking_on);
     void update();
 };
 
@@ -75,7 +76,8 @@ int count_bullet(int id, const Bullet* bullets)
 bool Impl::fire(    const Robo& robo,
                     const Vector3& from,
                     const Vector3& angle,
-                    const Robo* opponent)
+                    const Robo* opponent,
+                    const bool is_locking_on)
 {
     int count = count_bullet(robo.int_id(), bullets_);
 
@@ -93,7 +95,11 @@ bool Impl::fire(    const Robo& robo,
             continue;
         }
 
-        bullets_[i].initialize(robo.int_id(), from, angle, opponent);
+        bullets_[i].initialize( robo.int_id(),
+                                from,
+                                angle,
+                                opponent,
+                                is_locking_on);
         did_fire = true;
         break;
     }
@@ -145,9 +151,10 @@ void TheArmoury::draw(const View& view) const { g_impl->draw(view); }
 bool TheArmoury::fire(  const Robo& robo,
                         const Vector3& from,
                         const Vector3& direction,
-                        const Robo* opponent) const
+                        const Robo* opponent,
+                        const bool is_locking_on) const
 {
-    return g_impl->fire(robo, from, direction, opponent);
+    return g_impl->fire(robo, from, direction, opponent, is_locking_on);
 }
 
 void TheArmoury::update() const { g_impl->update(); }

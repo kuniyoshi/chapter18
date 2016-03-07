@@ -27,7 +27,8 @@ public:
     bool fire(  const Robo& robo,
                 const Vector3& from,
                 const Vector3& angle,
-                const Robo* opponent) const;
+                const Robo* opponent,
+                const bool is_locking_on) const;
     void update() const;
 };
 
