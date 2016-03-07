@@ -38,6 +38,7 @@ private:
     bool is_locking_on_;
     unsigned sighting_ms_;
     double energy_;
+    double hp_;
 
 public:
     Robo(const std::string& id);
@@ -55,6 +56,7 @@ public:
     void view(int height, int width, double near_clip, double far_clip);
     View* view() const;
     double energy() const;
+    double hp() const;
 
     void absorb_energy();
     void boost(const Vector3& direction);
@@ -72,6 +74,7 @@ public:
     Sphere sphere() const;
     void update(const Robo& opponent);
     void warp(const Vector3& to);
+    void was_shot(double damage);
 
 private:
     void lock_on(const Robo& opponent);

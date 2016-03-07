@@ -133,4 +133,20 @@ void TheFrontend::draw(const Robo& player)
                 0xea2a561e,
                 0xea2a561e,
                 f);
+
+    // hp
+    const double hp_bar_left    = -0.8;
+    const double hp_bar_right   = +0.8;
+    const double hp = player.hp();
+    const double current_hp = (hp_bar_right - hp_bar_left) * hp + hp_bar_left;
+
+    draw_rect(  pair< double, double >(hp_bar_left, -0.8),
+                pair< double, double >(current_hp, -0.8),
+                pair< double, double >(hp_bar_left, -0.9),
+                pair< double, double >(current_hp, -0.9),
+                0xeab2a770,
+                0xeab2a770,
+                0xeab2a770,
+                0xeab2a770,
+                f);
 }

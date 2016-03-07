@@ -59,7 +59,8 @@ Robo::Robo(const std::string& id)
     state_counter_(0),
     is_locking_on_(false),
     sighting_ms_(0),
-    energy_(1.0)
+    energy_(1.0),
+    hp_(1.0)
 {
     TheDatabase::instance().create(id_, "robo");
     model_ = TheDatabase::instance().find(id_);
@@ -131,6 +132,8 @@ void Robo::view(int width, int height, double near_clip, double far_clip)
 View* Robo::view() const { return view_; }
 
 double Robo::energy() const { return energy_; }
+
+double Robo::hp() const { return hp_; }
 
 namespace
 {
@@ -443,6 +446,16 @@ Sphere Robo::sphere() const
 void Robo::warp(const Vector3& to)
 {
     model_->position(to);
+}
+
+void Robo::was_shot(double damage)
+{
+    hp_ = hp_ - damage;
+
+    if (hp_ - damage < 0.0)
+    {
+        hp_ = 0.0;
+    }
 }
 
 namespace
