@@ -345,7 +345,7 @@ namespace
 
 // sighting
 const double MaxDepthCanLockOn      = 100.0;
-const double MinDepthCanLockOn      = 10.0;
+const double MinDepthCanLockOn      = 3.0;
 const double HalfThetaAtMaxDepth    = 1.0;
 const double HalfHeightAtMaxDepth
 = MaxDepthCanLockOn * GameLib::tan(HalfThetaAtMaxDepth);
@@ -412,6 +412,7 @@ void Robo::print(std::ostringstream* oss) const
     else
     {
         *oss << "NOT locking on...";
+        *oss << sighting_ms_;
     }
 }
 
@@ -534,7 +535,7 @@ void Robo::lock_on(const Robo& opponent)
 {
     Vector3 direction(0.0, 0.0, -1.0);
     Matrix44 rotation;
-    rotation.rotate(*view_->angle());
+    rotation.rotate(-*view_->angle());
     rotation.multiply(&direction);
 
     if (!is_sighting(*center(), *opponent.center(), direction))
