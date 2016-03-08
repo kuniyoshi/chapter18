@@ -65,6 +65,9 @@ public:
     void commit_next_position();
     void draw(const View& view) const;
     void fire_bullet(const Robo* opponent);
+    double get_half_sight_size_at_depth(const Robo& opponent) const;
+    double get_lock_on_rate() const;
+    double get_sight_depth(const Robo& opponent) const;
     void print(std::ostringstream* oss) const;
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);

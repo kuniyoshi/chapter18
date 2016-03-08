@@ -340,6 +340,52 @@ void Robo::fire_bullet(const Robo* opponent)
     weapon_state_ = WeaponStateCharging;
 }
 
+namespace
+{
+
+// sighting
+const double MaxDepthCanLockOn      = 100.0;
+const double MinDepthCanLockOn      = 10.0;
+const double HalfThetaAtMaxDepth    = 1.0;
+const double HalfHeightAtMaxDepth
+= MaxDepthCanLockOn * GameLib::tan(HalfThetaAtMaxDepth);
+const double HalfThetaAtMinDepth
+= GameLib::atan2(HalfHeightAtMaxDepth, MinDepthCanLockOn);
+const double HalfHeightAtMinDepth
+= MinDepthCanLockOn * GameLib::tan(HalfThetaAtMinDepth);
+const unsigned MsToCompleteLockOn   = 3000;
+
+double calc_half_theta_at_depth(double depth)
+{
+    return GameLib::atan2(HalfHeightAtMaxDepth, depth);
+}
+
+} // namespace -
+
+double Robo::get_half_sight_size_at_depth(const Robo& opponent) const
+{
+    Vector3 to_opponent_point(*opponent.center());
+    to_opponent_point.subtract(*center());
+    const double depth = to_opponent_point.length();
+    const double theta = calc_half_theta_at_depth(depth);
+    const double length_at_depth = depth * GameLib::tan(theta);
+    return length_at_depth;
+}
+
+double Robo::get_lock_on_rate() const
+{
+    double rate = static_cast< double >(sighting_ms_) / MsToCompleteLockOn;
+    return rate > 1.0 ? 1.0 : rate < 0.0 ? 0.0: rate;
+}
+
+double Robo::get_sight_depth(const Robo& opponent) const
+{
+    Vector3 to_opponent_point(*opponent.center());
+    to_opponent_point.subtract(*center());
+    const double depth = to_opponent_point.length();
+    return depth;
+}
+
 void Robo::print(std::ostringstream* oss) const
 {
     // const Vector3* balance = model_->position();
@@ -461,23 +507,6 @@ void Robo::was_shot(double damage)
 
 namespace
 {
-
-// Lock on
-const double MaxDepthCanLockOn      = 100.0;
-const double MinDepthCanLockOn      = 10.0;
-const double HalfThetaAtMaxDepth    = 1.0;
-const double HalfHeightAtMaxDepth
-= MaxDepthCanLockOn * GameLib::tan(HalfThetaAtMaxDepth);
-const double HalfThetaAtMinDepth
-= GameLib::atan2(HalfHeightAtMaxDepth, MinDepthCanLockOn);
-const double HalfHeightAtMinDepth
-= MinDepthCanLockOn * GameLib::tan(HalfThetaAtMinDepth);
-const unsigned MsToCompleteLockOn   = 3000;
-
-double calc_half_theta_at_depth(double depth)
-{
-    return GameLib::atan2(HalfHeightAtMaxDepth, depth);
-}
 
 bool is_sighting(   const Vector3& self_point,
                     const Vector3& opponent_point,

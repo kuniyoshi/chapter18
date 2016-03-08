@@ -3,6 +3,7 @@
 #include <cmath>
 #include <utility>
 #include "GameLib/Framework.h"
+#include "GameLib/Math.h"
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Robo.h"
@@ -56,6 +57,94 @@ void draw_rect( pair< double, double > p0,
     f.drawTriangle3DH(  q1, q3, q2,
                         0, 0, 0,
                         c1, c3, c2);
+}
+
+void rotate(pair< double, double >* dot, double theta)
+{
+    double cosine = GameLib::cos(theta);
+    double sine = GameLib::sin(theta);
+    double x = dot->first;
+    double y = dot->second;
+    dot->first = cosine * x - sine * y;
+    dot->second = cosine * x + sine * y;
+}
+
+void draw_horizontal_line(  pair< double, double > from,
+                            pair< double, double > to,
+                            double thickness,
+                            unsigned from_color,
+                            unsigned to_color,
+                            GameLib::Framework f,
+                            double z = 0.0,
+                            double w = 1.0)
+{
+    double q0[4];
+    double q1[4];
+    double q2[4];
+    double q3[4];
+
+    q0[0] = from.first;
+    q0[1] = from.second + thickness;
+    q0[2] = z;
+    q0[3] = w;
+    q1[0] = to.first;
+    q1[1] = to.second + thickness;
+    q1[2] = z;
+    q1[3] = w;
+    q2[0] = from.first;
+    q2[1] = from.second - thickness;
+    q2[2] = z;
+    q2[3] = w;
+    q3[0] = to.first;
+    q3[1] = to.second - thickness;
+    q3[2] = z;
+    q3[3] = w;
+
+    f.drawTriangle3DH(  q0, q1, q2,
+                        0, 0, 0,
+                        from_color, to_color, from_color);
+    f.drawTriangle3DH(  q1, q3, q2,
+                        0, 0, 0,
+                        to_color, to_color, from_color);
+}
+
+void draw_vertical_line(    pair< double, double > from,
+                            pair< double, double > to,
+                            double thickness,
+                            unsigned from_color,
+                            unsigned to_color,
+                            GameLib::Framework f,
+                            double z = 0.0,
+                            double w = 1.0)
+{
+    double q0[4];
+    double q1[4];
+    double q2[4];
+    double q3[4];
+
+    q0[0] = from.first - thickness;
+    q0[1] = from.second;
+    q0[2] = z;
+    q0[3] = w;
+    q1[0] = from.first + thickness;
+    q1[1] = from.second;
+    q1[2] = z;
+    q1[3] = w;
+    q2[0] = to.first - thickness;
+    q2[1] = to.second;
+    q2[2] = z;
+    q2[3] = w;
+    q3[0] = to.first + thickness;
+    q3[1] = to.second;
+    q3[2] = z;
+    q3[3] = w;
+
+    f.drawTriangle3DH(  q0, q1, q2,
+                        0, 0, 0,
+                        from_color, from_color, to_color);
+    f.drawTriangle3DH(  q1, q3, q2,
+                        0, 0, 0,
+                        from_color, to_color, to_color);
 }
 
 unsigned calc_gradation_color(unsigned from, unsigned to, double rate)
@@ -184,4 +273,45 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
                 f,
                 0.0,
                 opponent_point.w);
+
+    // lock on sight
+    const double size = player.get_half_sight_size_at_depth(opponent);
+    const double depth = player.get_sight_depth(opponent);
+    const double lock_on_rate = player.get_lock_on_rate();
+    const unsigned to_color = 0xeaf36c2e;
+    const unsigned from_color
+    = calc_gradation_color_non_linear(0xeac3dc0c, to_color, lock_on_rate);
+
+    draw_horizontal_line(   pair< double, double >(-size, +size),
+                            pair< double, double >(+size, +size),
+                            0.06,
+                            from_color,
+                            to_color,
+                            f,
+                            0.0,
+                            depth);
+    draw_vertical_line( pair< double, double >(+size, +size),
+                        pair< double, double >(+size, -size),
+                        0.06,
+                        from_color,
+                        to_color,
+                        f,
+                        0.0,
+                        depth);
+    draw_horizontal_line(   pair< double, double >(-size, -size),
+                            pair< double, double >(+size, -size),
+                            0.06,
+                            from_color,
+                            to_color,
+                            f,
+                            0.0,
+                            depth);
+    draw_vertical_line( pair< double, double >(-size, +size),
+                        pair< double, double >(-size, -size),
+                        0.06,
+                        from_color,
+                        to_color,
+                        f,
+                        0.0,
+                        depth);
 }
