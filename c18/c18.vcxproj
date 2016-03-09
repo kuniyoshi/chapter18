@@ -173,6 +173,8 @@
     <ClCompile Include="src\TheCollision.cpp" />
     <ClCompile Include="src\TheDatabase.cpp" />
     <ClCompile Include="src\TheDebugOutput.cpp" />
+    <ClCompile Include="src\TheEnvironment.cpp" />
+    <ClCompile Include="src\TheFrontend.cpp" />
     <ClCompile Include="src\TheHorizon.cpp" />
     <ClCompile Include="src\TheTime.cpp" />
     <ClCompile Include="src\Triangle.cpp" />
@@ -190,6 +192,8 @@
     <ClInclude Include="src\TheCollision.h" />
     <ClInclude Include="src\TheDatabase.h" />
     <ClInclude Include="src\TheDebugOutput.h" />
+    <ClInclude Include="src\TheEnvironment.h" />
+    <ClInclude Include="src\TheFrontend.h" />
     <ClInclude Include="src\TheHorizon.h" />
     <ClInclude Include="src\TheTime.h" />
     <ClInclude Include="src\Triangle.h" />
