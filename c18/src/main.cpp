@@ -182,10 +182,10 @@ void Framework::update()
     g_opponent->update(*g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo);
     TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_opponent);
-    TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_wall);
+    // TheCollision::slide_next_move_if_collision_will_occur(g_robo, g_wall);
     TheCollision::slide_next_move_if_collision_will_occur(g_opponent);
     TheCollision::slide_next_move_if_collision_will_occur(g_opponent, g_robo);
-    TheCollision::slide_next_move_if_collision_will_occur(g_opponent, g_wall);
+    // TheCollision::slide_next_move_if_collision_will_occur(g_opponent, g_wall);
     g_robo->commit_next_position();
     g_opponent->commit_next_position();
 
@@ -197,7 +197,7 @@ void Framework::update()
     g_robo->draw(*g_robo->view());
     g_opponent->draw(*g_robo->view());
     TheHorizon::instance().draw(*g_robo->view());
-    g_wall->draw(*g_robo->view());
+    // g_wall->draw(*g_robo->view());
     Ai::TheArmoury::instance().draw(*g_robo->view());
     TheFrontend::draw(*g_robo, *g_opponent);
 
