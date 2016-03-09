@@ -182,17 +182,10 @@ unsigned calc_gradation_color_non_linear(   unsigned from,
     return calc_gradation_color(from, to, std::pow(rate, 2.0));
 }
 
-} // namespace -
-
-void TheFrontend::draw(const Robo& player, const Robo& opponent)
+void draw_time_bar()
 {
     GameLib::Framework f = GameLib::Framework::instance();
-    f.setTexture(0);
-    f.setBlendMode(GameLib::Framework::BLEND_LINEAR);
-    f.enableDepthTest(true);
-    f.enableDepthWrite(false);
 
-    // time bar
     const double time_bar_left  = -0.8;
     const double time_bar_right = +0.8;
     const double time_bar_rate
@@ -211,8 +204,12 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
                 0xea055c9f,
                 0xea055c9f,
                 f);
+}
 
-    // energy
+void draw_energy_bar(const Robo& player)
+{
+    GameLib::Framework f = GameLib::Framework::instance();
+
     const double energy_bar_top     = +0.8;
     const double energy_bar_bottom  = -0.8;
     const double energy_bar_rate    = player.energy();
@@ -229,8 +226,12 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
                 0xea2a561e,
                 0xea2a561e,
                 f);
+}
 
-    // hp
+void draw_hp_bar(const Robo& player)
+{
+    GameLib::Framework f = GameLib::Framework::instance();
+
     const double hp_bar_left    = -0.8;
     const double hp_bar_right   = +0.8;
     const double hp = player.hp();
@@ -245,8 +246,12 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
                 0xeab2a770,
                 0xeab2a770,
                 f);
+}
 
-    // opponent hp
+void draw_opponent_hp_bar(const Robo& player, const Robo& opponent)
+{
+    GameLib::Framework f = GameLib::Framework::instance();
+
     Matrix44 transformation(player.view()->get_perspective_matrix());
     Vector3 opponent_point(*opponent.center());
     transformation.multiply(&opponent_point);
@@ -273,8 +278,12 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
                 f,
                 0.0,
                 opponent_point.w);
+}
 
-    // lock on sight
+void draw_lock_on_sight(const Robo& player, const Robo& opponent)
+{
+    GameLib::Framework f = GameLib::Framework::instance();
+
     const double size = player.get_half_sight_size_at_depth(opponent);
     const double depth = player.get_sight_depth(opponent);
     const double lock_on_rate = player.get_lock_on_rate();
@@ -314,4 +323,21 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
                         f,
                         0.0,
                         depth);
+}
+
+} // namespace -
+
+void TheFrontend::draw(const Robo& player, const Robo& opponent)
+{
+    GameLib::Framework f = GameLib::Framework::instance();
+    f.setTexture(0);
+    f.setBlendMode(GameLib::Framework::BLEND_LINEAR);
+    f.enableDepthTest(true);
+    f.enableDepthWrite(false);
+
+    draw_time_bar();
+    draw_energy_bar(player);
+    draw_hp_bar(player);
+    draw_opponent_hp_bar(player, opponent);
+    draw_lock_on_sight(player, opponent);
 }
