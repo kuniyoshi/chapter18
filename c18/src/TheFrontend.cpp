@@ -325,6 +325,156 @@ void draw_lock_on_sight(const Robo& player, const Robo& opponent)
                         depth);
 }
 
+double my_scale(double x, double max_abs)
+{
+    if (x > 0.0)
+    {
+        if (x > max_abs)
+        {
+            return 1.0;
+        }
+        return x / max_abs;
+    }
+    else if (x < 0.0)
+    {
+        if (x < -max_abs)
+        {
+            return -1.0;
+        }
+        return x / max_abs;
+    }
+    return 0.0;
+}
+
+void draw_radar_map(const Robo& player, const Robo& opponent)
+{
+    Matrix44 transformation;
+    transformation.translate(-*player.center());
+    transformation.rotate_zx(player.view()->angle()->y);
+
+    Vector3 opponent_point(*opponent.center());
+    transformation.multiply(&opponent_point);
+
+    const double opponent_y = opponent.center()->y;
+    const double player_y = player.center()->y;
+    const double max_abs_delta = 50.0;
+    double delta_y = opponent_y - player_y;
+
+    if (delta_y > max_abs_delta)
+    {
+        delta_y = max_abs_delta;
+    }
+    else if (delta_y < -max_abs_delta)
+    {
+        delta_y = -max_abs_delta;
+    }
+
+    const double delta_y_rate = (delta_y + max_abs_delta)
+    / (2.0 * max_abs_delta);
+    const unsigned color_from = 0xea140cdc;
+    const unsigned color_to = 0xeadc0c0c;
+    const unsigned opponent_color = calc_gradation_color(   color_from,
+                                                            color_to,
+                                                            delta_y_rate);
+    const unsigned player_color = calc_gradation_color( color_from,
+                                                        color_to,
+                                                        0.5);
+
+    opponent_point.y = 0.0;
+    const double max_abs_length = 20.0;
+    opponent_point.x = my_scale(opponent_point.x, max_abs_length);
+    opponent_point.z = my_scale(opponent_point.z, max_abs_length);
+
+    const pair< double, double > center(0.825, 0.675);
+    const double half_size = 0.125;
+
+    const pair< double, double > top_left(  center.first - half_size,
+                                            center.second + half_size);
+    const pair< double, double > top_right( center.first + half_size,
+                                            center.second + half_size);
+    const pair< double, double > bottom_left(   center.first - half_size,
+                                                center.second - half_size);
+    const pair< double, double > bottom_right(  center.first + half_size,
+                                                center.second - half_size);
+
+    GameLib::Framework f = GameLib::Framework::instance();
+    const unsigned line_color = 0xea1a4404;
+
+    draw_horizontal_line(   top_left,
+                            top_right,
+                            0.005,
+                            line_color,
+                            line_color,
+                            f);
+    draw_horizontal_line(   bottom_left,
+                            bottom_right,
+                            0.005,
+                            line_color,
+                            line_color,
+                            f);
+    draw_vertical_line( top_left,
+                        bottom_left,
+                        0.005,
+                        line_color,
+                        line_color,
+                        f);
+    draw_vertical_line( top_right,
+                        bottom_right,
+                        0.005,
+                        line_color,
+                        line_color,
+                        f);
+
+    const double player_half_size = 0.01;
+    const double player_left = center.first - player_half_size;
+    const double player_right = center.first + player_half_size;
+    const double player_top = center.second + player_half_size;
+    const double player_bottom = center.second - player_half_size;
+    const pair< double, double > player_top_left(player_left, player_top);
+    const pair< double, double > player_top_right(player_right, player_top);
+    const pair< double, double > player_bottom_left(    player_left,
+                                                        player_bottom);
+    const pair< double, double > player_bottom_right(   player_right,
+                                                        player_bottom);
+    draw_rect(  player_top_left,
+                player_top_right,
+                player_bottom_left,
+                player_bottom_right,
+                player_color,
+                player_color,
+                player_color,
+                player_color,
+                f);
+
+    const double opponent_half_size = 0.01;
+    opponent_point.scale(half_size);
+    const pair< double, double > opponent_center(   center.first
+                                                    + opponent_point.x,
+                                                    center.second
+                                                    + -opponent_point.z);
+    const double opponent_left = opponent_center.first - opponent_half_size;
+    const double opponent_right = opponent_center.first + opponent_half_size;
+    const double opponent_top = opponent_center.second + opponent_half_size;
+    const double opponent_bottom = opponent_center.second - opponent_half_size;
+    const pair< double, double > opponent_top_left( opponent_left,
+                                                    opponent_top);
+    const pair< double, double > opponent_top_right(    opponent_right,
+                                                        opponent_top);
+    const pair< double, double > opponent_bottom_left(  opponent_left,
+                                                        opponent_bottom);
+    const pair< double, double > opponent_bottom_right( opponent_right,
+                                                        opponent_bottom);
+    draw_rect(  opponent_top_left,
+                opponent_top_right,
+                opponent_bottom_left,
+                opponent_bottom_right,
+                opponent_color,
+                opponent_color,
+                opponent_color,
+                opponent_color,
+                f);
+}
+
 } // namespace -
 
 void TheFrontend::draw(const Robo& player, const Robo& opponent)
@@ -340,4 +490,5 @@ void TheFrontend::draw(const Robo& player, const Robo& opponent)
     draw_hp_bar(player);
     draw_opponent_hp_bar(player, opponent);
     draw_lock_on_sight(player, opponent);
+    draw_radar_map(player, opponent);
 }
