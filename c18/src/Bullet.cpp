@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include <algorithm>
 #include <cassert>
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Model.h"
@@ -28,8 +29,8 @@ const double BoostS                 = 1.0;
 // const double BoostS         = 2.0;
 const unsigned BoostMs              = static_cast< unsigned >(BoostS * 1000);
 const double DeltaSpeed             = (SpeedMax - Speed0) / BoostS;
-const double AbsAngleLimit          = 5.0;
-const double AnglePerMs             = 2.0 / 1e3;
+const double AbsAngleLimit          = 5.0e-3;
+const double AnglePerMs             = 20.0e-3 * static_cast< double >(MaxAgeMs);
 const double ActiveAngleLimit       = 30.0;
 
 double calc_delta_speed(unsigned from, unsigned dt)
@@ -124,14 +125,11 @@ void increase_velocity( Vector3* velocity,
     velocity->add(delta);
 }
 
-void fix_velocity_cause_of_thruster(    Vector3* velocity,
-                                        const Vector3& current_point,
-                                        const Vector3& target_point,
-                                        double t,
-                                        double dt)
+void fix_horizontal_velocity(   Vector3* velocity,
+                                const Vector3& direction,
+                                double t,
+                                double dt)
 {
-    Vector3 direction(target_point);
-    direction.subtract(current_point);
     double angle_t = GameLib::atan2(direction.x, direction.z);
     double angle_c = GameLib::atan2(velocity->x, velocity->z);
     double delta_angle = angle_t - angle_c;
@@ -150,20 +148,35 @@ void fix_velocity_cause_of_thruster(    Vector3* velocity,
         return;
     }
 
-    delta_angle = delta_angle * AnglePerMs / t;
-
-    if (delta_angle > AbsAngleLimit)
+    const double angle_limit = std::min(    AnglePerMs / t * dt,
+                                            AbsAngleLimit / dt);
+    if (delta_angle > angle_limit)
     {
-        delta_angle = AbsAngleLimit;
+        delta_angle = angle_limit;
     }
-    else if (delta_angle < -AbsAngleLimit)
+    else if (delta_angle < -angle_limit)
     {
-        delta_angle = -AbsAngleLimit;
+        delta_angle = -angle_limit;
     }
 
     Matrix44 rotation;
-    rotation.rotate(Vector3(0.0, delta_angle, 0.0));
+    rotation.rotate_zx(delta_angle);
     rotation.multiply(velocity);
+}
+
+void fix_velocity_cause_of_thruster(    Vector3* velocity,
+                                        const Vector3& current_point,
+                                        const Vector3& target_point,
+                                        double t,
+                                        double dt)
+{
+    Vector3 direction(target_point);
+    direction.subtract(current_point);
+
+    fix_horizontal_velocity(    velocity,
+                                direction,
+                                t,
+                                dt);
 }
 
 } // namespace -
@@ -194,7 +207,7 @@ void Bullet::update()
                                         current_point_,
                                         *target_robo_->center(),
                                         static_cast< double >(age_) / 1e3,
-                                        dt);
+                                        static_cast< double >(dt) / 1e3);
     }
 
     if (age_ > MaxAgeMs)
