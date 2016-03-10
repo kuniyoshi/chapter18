@@ -381,7 +381,7 @@ double Robo::get_lock_on_rate() const
 double Robo::get_sight_depth(const Robo& opponent) const
 {
     Vector3 to_opponent_point(*opponent.center());
-    to_opponent_point.subtract(*center());
+    to_opponent_point.subtract(*view_->center());
     const double depth = to_opponent_point.length();
     return depth;
 }

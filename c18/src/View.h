@@ -22,6 +22,7 @@ public:
     double near_clip() const;
     double far_clip() const;
     const Vector3* angle() const;
+    const Vector3* center() const;
     void decrease_angle_of_view(int a);
     void follow(const Robo& robo);
     Matrix44 get_perspective_matrix() const;

@@ -47,6 +47,11 @@ const Vector3* View::angle() const
     return camera_.angle();
 }
 
+const Vector3* View::center() const
+{
+    return camera_.position();
+}
+
 void View::decrease_angle_of_view(int a)
 {
     unsigned delta = TheTime::instance().delta();
