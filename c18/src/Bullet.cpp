@@ -8,6 +8,7 @@
 #include "GameLib/Math.h"
 #include "Robo.h"
 #include "TheDatabase.h"
+#include "TheEnvironment.h"
 #include "TheTime.h"
 #include "View.h"
 
@@ -19,7 +20,6 @@ namespace
 
 const unsigned MaxAgeMs             = 10000;
 const double Scale                  = 0.2;
-const double GravityAcceleration    = 9.8;
 const double Speed0                 = 50.0;
 const double SpeedMax               = 60.0;
 // const double Speed0     = 115.0;
@@ -34,9 +34,9 @@ const double AbsAngleLimit          = 5.0e-3;
 const double AnglePerMs             = 20.0e-3 * static_cast< double >(MaxAgeMs);
 const double ActiveAngleLimit       = 30.0;
 const double VerticalAcceleration
-= 2.0 * GravityAcceleration * static_cast< double >(MaxAgeMs);
+= 2.0 * TheEnvironment::GravityAcceleration * static_cast< double >(MaxAgeMs);
 const double VerticalAbsSpeedLimit
-= 2.0 * GravityAcceleration * 1e-3;
+= 2.0 * TheEnvironment::GravityAcceleration * 1e-3;
 
 double calc_delta_speed(unsigned from, unsigned dt)
 {
@@ -201,7 +201,8 @@ void fix_vertical_velocity( Vector3* velocity,
                                             + std::pow(velocity->z, 2.0));
     const double estimated_t = zx_distance / zx_velocity;
     const double y_at_estimated_t = velocity->y * estimated_t
-                                    - 0.5 * GravityAcceleration
+                                    - 0.5
+                                    * TheEnvironment::gravity_acceleration()
                                     * std::pow(estimated_t, 2.0);
 
     const double speed_limit = std::min(    VerticalAcceleration / t * dt,
@@ -249,7 +250,7 @@ void Bullet::update()
     increase_velocity(&velocity_, angle(), age_, dt);
 
     velocity_.y = velocity_.y
-    - GravityAcceleration * static_cast< double >(dt) / 1e3;
+    - TheEnvironment::gravity_acceleration() * static_cast< double >(dt) / 1e3;
 
     age_ = age_ + dt;
 

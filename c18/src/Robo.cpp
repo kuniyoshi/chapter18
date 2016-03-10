@@ -12,6 +12,7 @@
 #include "Segment.h"
 #include "Sphere.h"
 #include "TheDatabase.h"
+#include "TheEnvironment.h"
 #include "TheTime.h"
 #include "View.h"
 
@@ -31,8 +32,6 @@ const double DragArea   = 2.0 * HalfWidth * Height;
 
 const double AirDensity     = 1.293; // [kg/m^3]
 const double AirViscosity   = 1.8 * 1e-5;
-
-const double GravityAcceleration = 9.8; // [m/s^2]
 
 const double DirectionCoefSide = 0.8;
 const double DirectionCoefBack = 0.6;
@@ -611,5 +610,5 @@ void Robo::set_delta_next_position()
 
     delta_next_position_ = delta;
 
-    force_.set(0.0, -GravityAcceleration * mass_, 0.0);
+    force_.set(0.0, -TheEnvironment::gravity_acceleration() * mass_, 0.0);
 }
