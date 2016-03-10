@@ -79,10 +79,21 @@ void Bullet::initialize(    int id,
     age_ = 0;
     is_homing_ = is_homing;
     current_point_ = from;
-    Matrix44 rotation;
-    rotation.rotate(angle);
-    velocity_ = Vector3(0.0, 0.0, Speed0);
-    rotation.multiply(&velocity_);
+
+    if (!is_homing_)
+    {
+        Matrix44 rotation;
+        rotation.rotate(angle);
+        velocity_ = Vector3(0.0, 0.0, Speed0);
+        rotation.multiply(&velocity_);
+    }
+    else
+    {
+        velocity_ = *opponent->center();
+        velocity_.subtract(from);
+        velocity_.normalize(Speed0);
+    }
+
     target_robo_ = opponent;
 }
 
