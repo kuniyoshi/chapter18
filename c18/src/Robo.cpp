@@ -1,4 +1,5 @@
 #include "Robo.h"
+#include <cstdlib>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -514,18 +515,30 @@ bool is_sighting(   const Vector3& self_point,
 {
     Vector3 to_opponent(opponent_point);
     to_opponent.subtract(self_point);
-    double depth = to_opponent.length();
+    const double depth = to_opponent.length();
 
     if (depth < MinDepthCanLockOn || depth > MaxDepthCanLockOn)
     {
         return false;
     }
 
-    double theta = calc_half_theta_at_depth(depth);
-    double cos_theta = direction.dot(to_opponent)
-    / direction.length() / to_opponent.length();
+    const double abs_theta = std::abs(calc_half_theta_at_depth(depth));
 
-    return cos_theta > GameLib::cos(theta);
+    Matrix44 rotation;
+    rotation.rotate(Vector3(90.0 - GameLib::atan2(direction.z, direction.y),
+                            -GameLib::atan2(direction.x, direction.z),
+                            0.0));
+
+    rotation.multiply(&to_opponent);
+
+    const double theta_zx = normalize_angle(GameLib::atan2( to_opponent.x,
+                                                            to_opponent.z)
+                                            + 180.0);
+    const double theta_yz = normalize_angle(GameLib::atan2( to_opponent.z,
+                                                            to_opponent.y)
+                                            + 90.0);
+
+    return std::abs(theta_zx) < abs_theta && std::abs(theta_yz) < abs_theta;
 }
 
 } // namespace -
