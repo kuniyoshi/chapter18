@@ -1,6 +1,7 @@
 #include "Bullet.h"
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
@@ -32,6 +33,10 @@ const double DeltaSpeed             = (SpeedMax - Speed0) / BoostS;
 const double AbsAngleLimit          = 5.0e-3;
 const double AnglePerMs             = 20.0e-3 * static_cast< double >(MaxAgeMs);
 const double ActiveAngleLimit       = 30.0;
+const double VerticalAcceleration
+= 2.0 * GravityAcceleration * static_cast< double >(MaxAgeMs);
+const double VerticalAbsSpeedLimit
+= 2.0 * GravityAcceleration * 1e-3;
 
 double calc_delta_speed(unsigned from, unsigned dt)
 {
@@ -126,10 +131,14 @@ void increase_velocity( Vector3* velocity,
 }
 
 void fix_horizontal_velocity(   Vector3* velocity,
-                                const Vector3& direction,
+                                const Vector3& current_point,
+                                const Vector3& target_point,
                                 double t,
                                 double dt)
 {
+    Vector3 direction(target_point);
+    direction.subtract(current_point);
+
     double angle_t = GameLib::atan2(direction.x, direction.z);
     double angle_c = GameLib::atan2(velocity->x, velocity->z);
     double delta_angle = angle_t - angle_c;
@@ -164,19 +173,56 @@ void fix_horizontal_velocity(   Vector3* velocity,
     rotation.multiply(velocity);
 }
 
+void fix_vertical_velocity( Vector3* velocity,
+                            const Vector3& current_point,
+                            const Vector3& target_point,
+                            double t,
+                            double dt)
+{
+    const double diff_y = target_point.y - current_point.y;
+    const double zx_distance = std::sqrt(   std::pow(   target_point.x
+                                                        - current_point.x,
+                                                        2.0)
+                                            + std::pow( target_point.z
+                                                        - current_point.z,
+                                                        2.0));
+    const double zx_velocity = std::sqrt(   std::pow(velocity->x, 2.0)
+                                            + std::pow(velocity->z, 2.0));
+    const double estimated_t = zx_distance / zx_velocity;
+    const double y_at_estimated_t = velocity->y * estimated_t
+                                    - 0.5 * GravityAcceleration
+                                    * std::pow(estimated_t, 2.0);
+
+    const double speed_limit = std::min(    VerticalAcceleration / t * dt,
+                                            VerticalAbsSpeedLimit / dt);
+
+
+    if (current_point.y + y_at_estimated_t < target_point.y)
+    {
+        velocity->y = velocity->y + speed_limit;
+    }
+    else if (current_point.y + y_at_estimated_t > target_point.y)
+    {
+        velocity->y = velocity->y - speed_limit;
+    }
+}
+
 void fix_velocity_cause_of_thruster(    Vector3* velocity,
                                         const Vector3& current_point,
                                         const Vector3& target_point,
                                         double t,
                                         double dt)
 {
-    Vector3 direction(target_point);
-    direction.subtract(current_point);
-
     fix_horizontal_velocity(    velocity,
-                                direction,
+                                current_point,
+                                target_point,
                                 t,
                                 dt);
+    fix_vertical_velocity(  velocity,
+                            current_point,
+                            target_point,
+                            t,
+                            dt);
 }
 
 } // namespace -
