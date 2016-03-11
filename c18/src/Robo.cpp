@@ -511,7 +511,7 @@ namespace
 
 bool is_sighting(   const Vector3& self_point,
                     const Vector3& opponent_point,
-                    const Vector3& direction)
+                    const Vector3& angle)
 {
     Vector3 to_opponent(opponent_point);
     to_opponent.subtract(self_point);
@@ -525,15 +525,14 @@ bool is_sighting(   const Vector3& self_point,
     const double abs_theta = std::abs(calc_half_theta_at_depth(depth));
 
     Matrix44 rotation;
-    rotation.rotate(Vector3(90.0 - GameLib::atan2(direction.z, direction.y),
-                            -GameLib::atan2(direction.x, direction.z),
-                            0.0));
-
+    rotation.rotate_yz(-angle.x);
+    rotation.rotate_zx(-angle.y);
     rotation.multiply(&to_opponent);
 
+    // zero at (0, 0, -1)
     const double theta_zx = normalize_angle(GameLib::atan2( to_opponent.x,
                                                             to_opponent.z)
-                                            + 180.0);
+                                            - 180.0);
     const double theta_yz = normalize_angle(GameLib::atan2( to_opponent.z,
                                                             to_opponent.y)
                                             + 90.0);
@@ -545,12 +544,7 @@ bool is_sighting(   const Vector3& self_point,
 
 void Robo::lock_on(const Robo& opponent)
 {
-    Vector3 direction(0.0, 0.0, -1.0);
-    Matrix44 rotation;
-    rotation.rotate(-*view_->angle());
-    rotation.multiply(&direction);
-
-    if (!is_sighting(*center(), *opponent.center(), direction))
+    if (!is_sighting(*center(), *opponent.center(), -*view_->angle()))
     {
         is_locking_on_ = false;
         sighting_ms_ = 0;
