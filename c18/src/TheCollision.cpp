@@ -208,17 +208,17 @@ void TheCollision::by_sphere(Robo* robo, const Robo* opponent)
 namespace
 {
 
-void robo_to_triangles(Robo* robo, std::vector< Triangle > triangles)
+void robo_to_triangles(Robo* robo, const std::vector< Triangle >* triangles)
 {
     const std::vector< Segment > segments = robo->segments();
     std::vector< Segment >::const_iterator it = segments.begin();
     std::pair< bool, Vector3 > collision_point(false, Vector3(0.0, 0.0, 0.0));
 
-    for (size_t i = 0; i < triangles.size(); ++i)
+    for (size_t i = 0; i < triangles->size(); ++i)
     {
         for (it = segments.begin(); it != segments.end(); ++it)
         {
-            collision_point = (*it).get_intersected_point(triangles[i]);
+            collision_point = (*it).get_intersected_point(triangles->at(i));
 
             if (collision_point.first)
             {
@@ -276,12 +276,12 @@ void robo_to_triangles(Robo* robo, std::vector< Triangle > triangles)
 
 void TheCollision::by_segment(Robo* robo)
 {
-    std::vector< Triangle > triangles = TheHorizon::instance().triangles();
+    const std::vector< Triangle >* triangles = TheHorizon::instance().triangles();
     robo_to_triangles(robo, triangles);
 }
 
 void TheCollision::by_segment(Robo* robo, const Wall* wall)
 {
-    std::vector< Triangle > triangles = wall->triangles();
+    const std::vector< Triangle >* triangles = wall->triangles();
     robo_to_triangles(robo, triangles);
 }

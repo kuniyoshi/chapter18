@@ -15,12 +15,13 @@ class Wall
 {
 private:
     Model* model_;
+    std::vector< Triangle > triangles_;
 
 public:
     Wall(const std::string& id);
     ~Wall();
     void draw(const View& view) const;
-    std::vector< Triangle > triangles() const;
+    const std::vector< Triangle >* triangles() const;
     void warp(const Vector3& position);
 };
 

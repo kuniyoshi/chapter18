@@ -23,7 +23,7 @@ public:
     Cuboid cuboid() const;
     void draw(const View& view);
     Sphere sphere() const;
-    std::vector< Triangle > triangles() const;
+    const std::vector< Triangle >* triangles() const;
 };
 
 #endif

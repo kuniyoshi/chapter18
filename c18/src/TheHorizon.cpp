@@ -32,25 +32,37 @@ private:
     double height_;
     Vector3 uv_vertexes_[4];
     Vector3 vertexes_[4];
+    std::vector< Triangle > triangles_;
 
 public:
     Impl();
     ~Impl();
     void draw(const View& view);
+    const std::vector< Triangle >* triangles() const;
 };
 
 Impl::Impl()
 :   texture_(0), height_(0.0),
-    uv_vertexes_(), vertexes_()
+    uv_vertexes_(), vertexes_(),
+    triangles_()
 {
     GameLib::Framework f = GameLib::Framework::instance();
     f.createTexture(&texture_, "data/image/stage.tga");
+
+    triangles_.reserve(2);
+    triangles_.push_back(Triangle(  Vector3(-1000.0, 0.0, -1000.0),
+                                    Vector3(+1000.0, 0.0, -1000.0),
+                                    Vector3(-1000.0, 0.0, +1000.0)));
+    triangles_.push_back(Triangle(  Vector3(+1000.0, 0.0, -1000.0),
+                                    Vector3(+1000.0, 0.0, +1000.0),
+                                    Vector3(-1000.0, 0.0, +1000.0)));
 }
 
 Impl::~Impl()
 {
     GameLib::Framework f = GameLib::Framework::instance();
     f.destroyTexture(&texture_);
+    triangles_.clear();
 }
 
 namespace
@@ -232,6 +244,11 @@ void Impl::draw(const View& view)
                         near_color);
 }
 
+const std::vector< Triangle >* Impl::triangles() const
+{
+    return &triangles_;
+}
+
 Impl* g_impl = 0;
 
 } // namespace -
@@ -272,15 +289,7 @@ Sphere TheHorizon::sphere() const
     return Sphere(Vector3(0.0, -1000.0, 0.0), 1000.0);
 }
 
-std::vector< Triangle > TheHorizon::triangles() const
+const std::vector< Triangle >* TheHorizon::triangles() const
 {
-    std::vector< Triangle > triangles;
-    triangles.reserve(2);
-    triangles.push_back(Triangle(   Vector3(-1000.0, 0.0, -1000.0),
-                                    Vector3(+1000.0, 0.0, -1000.0),
-                                    Vector3(-1000.0, 0.0, +1000.0)));
-    triangles.push_back(Triangle(   Vector3(+1000.0, 0.0, -1000.0),
-                                    Vector3(+1000.0, 0.0, +1000.0),
-                                    Vector3(-1000.0, 0.0, +1000.0)));
-    return triangles;
+    return g_impl->triangles();
 }
