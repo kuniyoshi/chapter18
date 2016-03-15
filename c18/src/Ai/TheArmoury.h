@@ -3,6 +3,7 @@
 
 namespace GraphicsDatabase { class Vector3; }
 class Robo;
+class TheHorizon;
 class View;
 
 using GraphicsDatabase::Vector3;
@@ -29,6 +30,8 @@ public:
                 const Vector3& angle,
                 const Robo* opponent,
                 const bool is_locking_on) const;
+    template< class T >
+    void make_collision(T to_what) const;
     void update() const;
 };
 

@@ -6,7 +6,9 @@
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "GameLib/Math.h"
+#include "Cuboid.h"
 #include "Robo.h"
+#include "Segment.h"
 #include "TheDatabase.h"
 #include "TheEnvironment.h"
 #include "TheTime.h"
@@ -58,8 +60,8 @@ double calc_delta_speed(unsigned from, unsigned dt)
 } // namespace -
 
 Bullet::Bullet()
-:   owner_id_(-1), age_(0), is_homing_(false),
-    current_point_(), velocity_(),
+:   owner_id_(-1), age_(0), is_homing_(false), did_collide_(false),
+    previous_point_(), current_point_(), velocity_(),
     target_robo_(0)
 {}
 
@@ -71,6 +73,7 @@ Bullet::~Bullet()
 void Bullet::initialize(    int id,
                             const Vector3& from,
                             const Vector3& angle,
+                            const Robo* shooter,
                             const Robo* opponent,
                             bool is_homing)
 {
@@ -78,6 +81,7 @@ void Bullet::initialize(    int id,
     owner_id_ = id;
     age_ = 0;
     is_homing_ = is_homing;
+    previous_point_ = from;
     current_point_ = from;
 
     if (!is_homing_)
@@ -94,8 +98,11 @@ void Bullet::initialize(    int id,
         velocity_.normalize(Speed0);
     }
 
+    shooter_ = shooter;
     target_robo_ = opponent;
 }
+
+bool Bullet::did_collide() const { return did_collide_; }
 
 Vector3 Bullet::angle() const
 {
@@ -105,6 +112,11 @@ Vector3 Bullet::angle() const
     angle.y = GameLib::atan2(velocity_.x, velocity_.z);
     angle.z = GameLib::atan2(velocity_.y, velocity_.x);
     return angle;
+}
+
+void Bullet::burn_at(const Vector3& at)
+{
+    did_collide_ = true;
 }
 
 void Bullet::draw(const View& view) const
@@ -124,6 +136,28 @@ void Bullet::draw(const View& view) const
 bool Bullet::is_owned() const { return owner_id_ >= 0; }
 
 bool Bullet::is_owned_by(int id) const { return id == owner_id_; }
+
+Cuboid Bullet::locus_cuboid() const
+{
+    Vector3 half_size;
+
+    Vector3 balance(current_point_);
+    balance.subtract(previous_point_);
+    balance.divide(2.0);
+
+    half_size.x = std::abs(balance.x);
+    half_size.y = std::abs(balance.y);
+    half_size.z = std::abs(balance.z);
+
+    balance.add(previous_point_);
+
+    return Cuboid(balance, half_size);
+}
+
+Segment Bullet::locus_segment() const
+{
+    return Segment(previous_point_, current_point_);
+}
 
 namespace
 {
@@ -246,6 +280,12 @@ void Bullet::update()
         return;
     }
 
+    if (did_collide_)
+    {
+        clear_owner();
+        return;
+    }
+
     unsigned dt = TheTime::instance().delta();
     increase_velocity(&velocity_, angle(), age_, dt);
 
@@ -257,6 +297,7 @@ void Bullet::update()
     Vector3 delta(velocity_);
     delta.multiply(static_cast< double >(dt) / 1e3);
 
+    previous_point_ = current_point_;
     current_point_.add(delta);
 
     if (is_homing_)
@@ -270,7 +311,13 @@ void Bullet::update()
 
     if (age_ > MaxAgeMs)
     {
-        owner_id_ = -1;
-        target_robo_ = 0;
+        clear_owner();
     }
+}
+
+void Bullet::clear_owner()
+{
+    owner_id_ = -1;
+    target_robo_ = 0;
+    did_collide_ = false;
 }

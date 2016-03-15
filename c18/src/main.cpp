@@ -189,6 +189,10 @@ void Framework::update()
     g_robo->commit_next_position();
     g_opponent->commit_next_position();
 
+    Ai::TheArmoury::instance().make_collision(TheHorizon::instance());
+    Ai::TheArmoury::instance().make_collision(g_opponent);
+    Ai::TheArmoury::instance().make_collision(g_robo);
+
     TheDebugOutput::print(*g_robo);
     TheDebugOutput::print(*g_robo->view());
 

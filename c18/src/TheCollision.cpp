@@ -1,6 +1,8 @@
 #include "TheCollision.h"
+#include <utility>
 #include <vector>
 #include "GraphicsDatabase/Vector3.h"
+#include "Bullet.h"
 #include "Cuboid.h"
 #include "Robo.h"
 #include "Segment.h"
@@ -10,6 +12,50 @@
 #include "Wall.h"
 
 using GraphicsDatabase::Vector3;
+
+void TheCollision::burn(    Bullet* bullet,
+                            Robo* robo,
+                            const Cuboid& cuboid,
+                            const std::vector< Triangle >& triangles)
+{
+    Cuboid bullet_cuboid = bullet->locus_cuboid();
+
+    if (!bullet_cuboid.does_intersect(cuboid))
+    {
+        return;
+    }
+
+    Segment segment = bullet->locus_segment();
+
+    for (size_t i = 0; i < triangles.size(); ++i)
+    {
+        std::pair< bool, Vector3 > cp
+        = segment.get_intersected_point(triangles.at(i));
+
+        if (cp.first)
+        {
+            bullet->burn_at(cp.second);
+            robo->was_shot(0.01);
+        }
+    }
+}
+
+void TheCollision::burn(Bullet* bullet, TheHorizon horizon)
+{
+    Segment segment = bullet->locus_segment();
+    const std::vector< Triangle >* triangles = horizon.triangles();
+
+    for (size_t i = 0; i < triangles->size(); ++i)
+    {
+        std::pair< bool, Vector3 > cp
+        = segment.get_intersected_point(triangles->at(i));
+
+        if (cp.first)
+        {
+            bullet->burn_at(cp.second);
+        }
+    }
+}
 
 void TheCollision::slide_next_move_if_collision_will_occur(Robo* robo)
 {

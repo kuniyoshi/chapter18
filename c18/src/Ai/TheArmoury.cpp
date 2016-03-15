@@ -2,8 +2,12 @@
 #include <cassert>
 #include "GraphicsDatabase/Vector3.h"
 #include "Bullet.h"
+#include "Cuboid.h"
 #include "Robo.h"
+#include "TheCollision.h"
 #include "TheDatabase.h"
+#include "TheHorizon.h"
+#include "Triangle.h"
 #include "View.h"
 
 using GraphicsDatabase::Vector3;
@@ -30,6 +34,8 @@ public:
                 const Vector3& direction,
                 const Robo* opponent,
                 const bool is_locking_on);
+    void make_collision(TheHorizon horizon);
+    void make_collision(Robo* target);
     void update();
 };
 
@@ -98,6 +104,7 @@ bool Impl::fire(    const Robo& robo,
         bullets_[i].initialize( robo.int_id(),
                                 from,
                                 angle,
+                                &robo,
                                 opponent,
                                 is_locking_on);
         did_fire = true;
@@ -105,6 +112,51 @@ bool Impl::fire(    const Robo& robo,
     }
 
     return did_fire;
+}
+
+void Impl::make_collision(TheHorizon horizon)
+{
+    for (int i = 0; i < 2 * MaxBulletPerRobo; ++i)
+    {
+        if (!bullets_[i].is_owned())
+        {
+            continue;
+        }
+
+        if (bullets_[i].did_collide())
+        {
+            continue;
+        }
+
+        TheCollision::burn(&bullets_[i], horizon);
+    }
+}
+
+void Impl::make_collision(Robo* target)
+{
+    std::vector< Triangle > triangles;
+    target->get_triangles(&triangles);
+    Cuboid cuboid = target->locus_cuboid();
+
+    for (int i = 0; i < 2 * MaxBulletPerRobo; ++i)
+    {
+        if (!bullets_[i].is_owned())
+        {
+            continue;
+        }
+
+        if (bullets_[i].did_collide())
+        {
+            continue;
+        }
+
+        if (bullets_[i].is_owned_by(target->int_id()))
+        {
+            continue;
+        }
+
+        TheCollision::burn(&bullets_[i], target, cuboid, triangles);
+    }
 }
 
 void Impl::update()
@@ -156,6 +208,15 @@ bool TheArmoury::fire(  const Robo& robo,
 {
     return g_impl->fire(robo, from, direction, opponent, is_locking_on);
 }
+
+template< class T >
+void TheArmoury::make_collision(T to_what) const
+{
+    g_impl->make_collision(to_what);
+}
+
+template void TheArmoury::make_collision(TheHorizon) const;
+template void TheArmoury::make_collision(Robo*) const;
 
 void TheArmoury::update() const { g_impl->update(); }
 

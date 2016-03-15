@@ -10,6 +10,7 @@ namespace GraphicsDatabase { class Model; }
 class Cuboid;
 class Segment;
 class Sphere;
+class Triangle;
 class View;
 
 using GraphicsDatabase::Model;
@@ -68,6 +69,8 @@ public:
     double get_half_sight_size_at_depth(const Robo& opponent) const;
     double get_lock_on_rate() const;
     double get_sight_depth(const Robo& opponent) const;
+    void get_triangles(std::vector< Triangle >* triangles) const;
+    Cuboid locus_cuboid() const;
     void print(std::ostringstream* oss) const;
     void rotate_zx(int angle_zx);
     void run(const Vector3& direction);

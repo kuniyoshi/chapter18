@@ -15,6 +15,7 @@
 #include "TheDatabase.h"
 #include "TheEnvironment.h"
 #include "TheTime.h"
+#include "Triangle.h"
 #include "View.h"
 
 using GraphicsDatabase::Matrix44;
@@ -384,6 +385,57 @@ double Robo::get_sight_depth(const Robo& opponent) const
     to_opponent_point.subtract(*view_->center());
     const double depth = to_opponent_point.length();
     return depth;
+}
+
+void Robo::get_triangles(std::vector< Triangle >* triangles) const
+{
+    size_t indexes_size = model_->indexes_size();
+    const int* indexes = model_->indexes();
+    triangles->reserve(indexes_size / 3);
+    const Vector3* vertexes = model_->vertexes();
+
+    for (size_t i = 0; i < indexes_size; i = i + 3)
+    {
+        Triangle triangle(  vertexes[indexes[i]],
+                            vertexes[indexes[i + 1]],
+                            vertexes[indexes[i + 2]]);
+        triangle.p0.add(*center());
+        triangle.p1.add(*center());
+        triangle.p2.add(*center());
+        triangles->push_back(triangle);
+    }
+}
+
+Cuboid Robo::locus_cuboid() const
+{
+    const Vector3* vertexes = model_->vertexes();
+    size_t size = model_->vertexes_size();
+    double max_length = 0.0;
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        if (vertexes[i].length() > max_length)
+        {
+            max_length = vertexes[i].length();
+        }
+    }
+
+    Vector3 half_size(max_length, max_length, max_length);
+
+    Vector3 previous(*center());
+    previous.subtract(delta_next_position_);
+
+    Vector3 balance(*center());
+    balance.subtract(previous);
+    balance.divide(2.0);
+
+    half_size.x = half_size.x + balance.x;
+    half_size.y = half_size.y + balance.y;
+    half_size.z = half_size.z + balance.z;
+
+    balance.add(previous);
+
+    return Cuboid(balance, half_size);
 }
 
 void Robo::print(std::ostringstream* oss) const
