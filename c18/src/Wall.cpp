@@ -5,6 +5,7 @@
 #include "GraphicsDatabase/Model.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "TheDatabase.h"
+#include "TheEnvironment.h"
 #include "Triangle.h"
 #include "View.h"
 
@@ -57,7 +58,10 @@ Wall::~Wall()
 
 void Wall::draw(const View& view) const
 {
-    model_->draw(view.get_perspective_matrix());
+    model_->draw(   view.get_perspective_matrix(),
+                    TheEnvironment::Brightness,
+                    TheEnvironment::AmbientBrightness,
+                    TheEnvironment::LightVector);
 }
 
 const std::vector< Triangle >* Wall::triangles() const

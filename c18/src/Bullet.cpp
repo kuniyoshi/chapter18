@@ -130,7 +130,10 @@ void Bullet::draw(const View& view) const
     model->scale(Scale);
     model->angle(angle());
     model->position(current_point_);
-    model->draw(view.get_perspective_matrix());
+    model->draw(    view.get_perspective_matrix(),
+                    TheEnvironment::Brightness,
+                    TheEnvironment::AmbientBrightness,
+                    TheEnvironment::LightVector);
 }
 
 bool Bullet::is_owned() const { return owner_id_ >= 0; }

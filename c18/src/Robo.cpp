@@ -293,7 +293,10 @@ const Vector3* Robo::center() const { return model_->position(); }
 
 void Robo::draw(const View& view) const
 {
-    model_->draw(view.get_perspective_matrix());
+    model_->draw(   view.get_perspective_matrix(),
+                    TheEnvironment::Brightness,
+                    TheEnvironment::AmbientBrightness,
+                    TheEnvironment::LightVector);
 }
 
 namespace

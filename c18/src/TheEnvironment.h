@@ -1,6 +1,10 @@
 #ifndef ROBOF__THE_ENVIRONMENT_H_
 #define ROBOF__THE_ENVIRONMENT_H_
 
+namespace GraphicsDatabase { class Vector3; }
+
+using GraphicsDatabase::Vector3;
+
 class TheEnvironment
 {
 public:
@@ -8,6 +12,9 @@ public:
     static double FollowRate;
     static const double GravityAcceleration;
     static unsigned RemainedBattleMs;
+    static const double AmbientBrightness;
+    static const Vector3 Brightness;
+    static const Vector3 LightVector;
 
     static double gravity_acceleration();
     static void tick();
