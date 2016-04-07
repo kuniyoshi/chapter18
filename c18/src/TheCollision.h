@@ -1,5 +1,5 @@
-#ifndef ROBOF__THE_COLLISION_H_
-#define ROBOF__THE_COLLISION_H_
+#ifndef ROBOFTHECOLLISION_H_
+#define ROBOFTHECOLLISION_H_
 #include <vector>
 
 class Bullet;

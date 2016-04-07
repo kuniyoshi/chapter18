@@ -1,5 +1,5 @@
-#ifndef ROBOF__THE_ENVIRONMENT_H_
-#define ROBOF__THE_ENVIRONMENT_H_
+#ifndef ROBOFTHEENVIRONMENT_H_
+#define ROBOFTHEENVIRONMENT_H_
 
 namespace GraphicsDatabase { class Vector3; }
 

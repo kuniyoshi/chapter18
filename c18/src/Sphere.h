@@ -1,5 +1,5 @@
-#ifndef ROBOF__SPHERE_H_
-#define ROBOF__SPHERE_H_
+#ifndef ROBOFSPHERE_H_
+#define ROBOFSPHERE_H_
 #include "GraphicsDatabase/Vector3.h"
 
 using GraphicsDatabase::Vector3;

@@ -1,5 +1,5 @@
-#ifndef ROBOF__VIEW_H_
-#define ROBOF__VIEW_H_
+#ifndef ROBOFVIEW_H_
+#define ROBOFVIEW_H_
 #include <sstream>
 #include "GraphicsDatabase/Camera.h"
 #include "GraphicsDatabase/Vector3.h"

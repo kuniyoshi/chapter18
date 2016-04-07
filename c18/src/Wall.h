@@ -1,5 +1,5 @@
-#ifndef ROBOF__WALL_H_
-#define ROBOF__WALL_H_
+#ifndef ROBOFWALL_H_
+#define ROBOFWALL_H_
 #include <string>
 #include <vector>
 

@@ -1,5 +1,5 @@
-#ifndef ROBOF__PAD_H_
-#define ROBOF__PAD_H_
+#ifndef ROBOFPAD_H_
+#define ROBOFPAD_H_
 
 class Pad
 {

@@ -1,5 +1,5 @@
-#ifndef ROBOF__SEGMENT_H_
-#define ROBOF__SEGMENT_H_
+#ifndef ROBOFSEGMENT_H_
+#define ROBOFSEGMENT_H_
 #include <utility>
 #include "GraphicsDatabase/Vector3.h"
 

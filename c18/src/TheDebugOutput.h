@@ -1,5 +1,5 @@
-#ifndef ROBOF__THE_DEBUG_OUTPUT_H_
-#define ROBOF__THE_DEBUG_OUTPUT_H_
+#ifndef ROBOFTHEDEBUGOUTPUT_H_
+#define ROBOFTHEDEBUGOUTPUT_H_
 
 class Robo;
 class Triangle;

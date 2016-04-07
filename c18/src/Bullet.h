@@ -1,5 +1,5 @@
-#ifndef ROBOF__BULLET_H_
-#define ROBOF__BULLET_H_
+#ifndef ROBOFBULLET_H_
+#define ROBOFBULLET_H_
 #include "GraphicsDatabase/Vector3.h"
 
 class Cuboid;

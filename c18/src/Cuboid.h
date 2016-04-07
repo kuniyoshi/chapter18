@@ -1,5 +1,5 @@
-#ifndef ROBOF__CUBOID_H_
-#define ROBOF__CUBOID_H_
+#ifndef ROBOFCUBOID_H_
+#define ROBOFCUBOID_H_
 
 namespace GraphicsDatabase { class Vector3; }
 

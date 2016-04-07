@@ -1,5 +1,5 @@
-#ifndef ROBOF__TRIANGLE_H_
-#define ROBOF__TRIANGLE_H_
+#ifndef ROBOFTRIANGLE_H_
+#define ROBOFTRIANGLE_H_
 #include <sstream>
 #include "GraphicsDatabase/Vector3.h"
 

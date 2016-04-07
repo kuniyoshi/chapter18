@@ -1,5 +1,5 @@
-#ifndef ROBOF__THE_HORIZON_H_
-#define ROBOF__THE_HORIZON_H_
+#ifndef ROBOFTHEHORIZON_H_
+#define ROBOFTHEHORIZON_H_
 #include <vector>
 
 class Cuboid;

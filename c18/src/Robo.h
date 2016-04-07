@@ -1,5 +1,5 @@
-#ifndef ROBOF__ROBO_H_
-#define ROBOF__ROBO_H_
+#ifndef ROBOFROBO_H_
+#define ROBOFROBO_H_
 #include <sstream>
 #include <string>
 #include <vector>

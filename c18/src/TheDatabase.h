@@ -1,5 +1,5 @@
-#ifndef ROBOF__THE_DATABASE_H_
-#define ROBOF__THE_DATABASE_H_
+#ifndef ROBOFTHEDATABASE_H_
+#define ROBOFTHEDATABASE_H_
 #include <string>
 
 namespace GraphicsDatabase { class Model; }

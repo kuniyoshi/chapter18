@@ -1,5 +1,5 @@
-#ifndef ROBOF__THE_FRONTEND_H_
-#define ROBOF__THE_FRONTEND_H_
+#ifndef ROBOFTHEFRONTEND_H_
+#define ROBOFTHEFRONTEND_H_
 
 class Robo;
 class View;
