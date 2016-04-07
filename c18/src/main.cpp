@@ -52,7 +52,6 @@ void make_sure_globals_are()
 
     if (!g_robo)
     {
-
         g_robo = new Robo("myrobo");
         g_robo->warp(Vector3(0.0, 10.0, -1.0));
         g_robo->set_model_angle_zx(180.0);
