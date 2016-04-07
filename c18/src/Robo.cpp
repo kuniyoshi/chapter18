@@ -469,32 +469,32 @@ Cuboid Robo::locus_cuboid() const
 
 void Robo::print(std::ostringstream* oss) const
 {
-    // const Vector3* balance = model_->position();
-    // *oss << "{";
-    // *oss << static_cast< int >(balance->x * 100);
-    // *oss << ", ";
-    // *oss << static_cast< int >(balance->y * 100);
-    // *oss << ", ";
-    // *oss << static_cast< int >(balance->z * 100);
-    // *oss << "}, ";
+    const Vector3* balance = tree_->balance();
+    *oss << "{";
+    *oss << static_cast< int >(balance->x * 100);
+    *oss << ", ";
+    *oss << static_cast< int >(balance->y * 100);
+    *oss << ", ";
+    *oss << static_cast< int >(balance->z * 100);
+    *oss << "}, ";
 
-    // *oss << "{";
-    // *oss << static_cast< int >(velocity_.x * 100);
-    // *oss << ", ";
-    // *oss << static_cast< int >(velocity_.y * 100);
-    // *oss << ", ";
-    // *oss << static_cast< int >(velocity_.z * 100);
-    // *oss << "}";
+    *oss << "{";
+    *oss << static_cast< int >(velocity_.x * 100);
+    *oss << ", ";
+    *oss << static_cast< int >(velocity_.y * 100);
+    *oss << ", ";
+    *oss << static_cast< int >(velocity_.z * 100);
+    *oss << "}";
 
-    if (is_locking_on_)
-    {
-        *oss << "is locking on!";
-    }
-    else
-    {
-        *oss << "NOT locking on...";
-        *oss << sighting_ms_;
-    }
+    // if (is_locking_on_)
+    // {
+    //     *oss << "is locking on!";
+    // }
+    // else
+    // {
+    //     *oss << "NOT locking on...";
+    //     *oss << sighting_ms_;
+    // }
 }
 
 void Robo::rotate_zx(int angle_zx)
