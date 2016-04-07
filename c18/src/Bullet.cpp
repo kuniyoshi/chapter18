@@ -126,7 +126,8 @@ void Bullet::draw(const View& view) const
         return;
     }
 
-    GraphicsDatabase::Model* model = TheDatabase::instance().find("bullet");
+    GraphicsDatabase::Model* model
+    = TheDatabase::instance().find_model("bullet");
     model->scale(Scale);
     model->angle(angle());
     model->position(current_point_);

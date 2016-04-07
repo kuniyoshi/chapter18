@@ -7,6 +7,7 @@
 #include "GameLib/Math.h"
 #include "GraphicsDatabase/Matrix44.h"
 #include "GraphicsDatabase/Model.h"
+#include "GraphicsDatabase/Tree.h"
 #include "GraphicsDatabase/Vector3.h"
 #include "Ai/TheArmoury.h"
 #include "Cuboid.h"
@@ -20,6 +21,7 @@
 
 using GraphicsDatabase::Matrix44;
 using GraphicsDatabase::Model;
+using GraphicsDatabase::Tree;
 using GraphicsDatabase::Vector3;
 
 namespace
@@ -47,9 +49,27 @@ const double BoostEnergyPerMs       = 0.0004;
 
 } // namespae -
 
+namespace
+{
+
+void set_balance(Tree* tree, Model* collider, const Vector3& new_value)
+{
+    tree->balance(new_value);
+    collider->position(new_value);
+}
+
+void set_angle(Tree* tree, Model* collider, const Vector3& new_value)
+{
+    tree->angle(new_value);
+    collider->angle(new_value);
+}
+
+} // namespace -
+
 Robo::Robo(const std::string& id)
 :   id_(id),
-    model_(0),
+    tree_(0),
+    collider_(0),
     force_(),
     velocity_(),
     delta_next_position_(),
@@ -64,13 +84,18 @@ Robo::Robo(const std::string& id)
     hp_(1.0)
 {
     TheDatabase::instance().create(id_, "robo");
-    model_ = TheDatabase::instance().find(id_);
-    delta_next_position_.copy_from(*(model_->position()));
+    tree_ = TheDatabase::instance().find(id_);
+    TheDatabase::instance().create_model(id_, "cube");
+    collider_ = TheDatabase::instance().find_model(id_);
+    collider_->position(*(tree_->balance()));
+    set_balance(tree_, collider_, *(tree_->balance()));
+    delta_next_position_.copy_from(*(tree_->balance()));
 }
 
 Robo::~Robo()
 {
-    model_ = 0; // will be deleted by the database
+    tree_ = 0; // will be deleted by the database
+    collider_ = 0; // will be deleted by the database
     SAFE_DELETE(view_);
 }
 
@@ -227,7 +252,7 @@ void Robo::boost(const Vector3& direction)
     energy_ = energy_ - BoostEnergyPerMs * delta;
 
     Vector3 tuned_direction(direction);
-    const Vector3* balance = model_->position();
+    const Vector3* balance = tree_->balance();
 
     if ((balance->y > Height / 2.0) && tuned_direction.length() > 0.0)
     {
@@ -248,8 +273,8 @@ void Robo::boost(const Vector3& direction)
 
 Cuboid Robo::cuboid() const
 {
-    const Vector3* vertexes = model_->vertexes();
-    size_t size = model_->vertexes_size();
+    const Vector3* vertexes = collider_->vertexes();
+    size_t size = collider_->vertexes_size();
     Vector3 half_size;
 
     // model has not been translated, it keeps vertexes (0, 0, 0) coordinate
@@ -276,7 +301,7 @@ Cuboid Robo::cuboid() const
         }
     }
 
-    Vector3 next_position(*(model_->position()));
+    Vector3 next_position(*(tree_->balance()));
     next_position.add(delta_next_position_);
 
     return Cuboid(next_position, half_size);
@@ -284,19 +309,20 @@ Cuboid Robo::cuboid() const
 
 void Robo::commit_next_position()
 {
-    Vector3 next_position(*(model_->position()));
+    Vector3 next_position(*(tree_->balance()));
     next_position.add(delta_next_position_);
-    model_->position(next_position);
+    set_balance(tree_, collider_, next_position);
+    tree_->update(TheTime::instance().delta());
 }
 
-const Vector3* Robo::center() const { return model_->position(); }
+const Vector3* Robo::center() const { return tree_->balance(); }
 
 void Robo::draw(const View& view) const
 {
-    model_->draw(   view.get_perspective_matrix(),
-                    TheEnvironment::Brightness,
-                    TheEnvironment::AmbientBrightness,
-                    TheEnvironment::LightVector);
+    tree_->draw_flat_shading(   view.get_perspective_matrix(),
+                                TheEnvironment::Brightness,
+                                TheEnvironment::AmbientBrightness,
+                                TheEnvironment::LightVector);
 }
 
 namespace
@@ -336,7 +362,7 @@ void Robo::fire_bullet(const Robo* opponent)
     Vector3 modified_angle(angle.x, angle_zx_, 0.0);
     normalize_angle(&modified_angle);
     Ai::TheArmoury::instance().fire(    *this,
-                                        *model_->position(),
+                                        *tree_->balance(),
                                         modified_angle,
                                         opponent,
                                         is_locking_on_);
@@ -392,10 +418,10 @@ double Robo::get_sight_depth(const Robo& opponent) const
 
 void Robo::get_triangles(std::vector< Triangle >* triangles) const
 {
-    size_t indexes_size = model_->indexes_size();
-    const int* indexes = model_->indexes();
+    size_t indexes_size = collider_->indexes_size();
+    const int* indexes = collider_->indexes();
     triangles->reserve(indexes_size / 3);
-    const Vector3* vertexes = model_->vertexes();
+    const Vector3* vertexes = collider_->vertexes();
 
     for (size_t i = 0; i < indexes_size; i = i + 3)
     {
@@ -411,8 +437,8 @@ void Robo::get_triangles(std::vector< Triangle >* triangles) const
 
 Cuboid Robo::locus_cuboid() const
 {
-    const Vector3* vertexes = model_->vertexes();
-    size_t size = model_->vertexes_size();
+    const Vector3* vertexes = collider_->vertexes();
+    size_t size = collider_->vertexes_size();
     double max_length = 0.0;
 
     for (size_t i = 0; i < size; ++i)
@@ -474,9 +500,9 @@ void Robo::print(std::ostringstream* oss) const
 void Robo::rotate_zx(int angle_zx)
 {
     angle_zx_ = angle_zx_ + static_cast< double >(angle_zx) / AngleScale;
-    Vector3 angle((*model_->angle()));
+    Vector3 angle((*tree_->angle()));
     angle.y = angle_zx_;
-    model_->angle(angle);
+    set_angle(tree_, collider_, angle);
 }
 
 void Robo::run(const Vector3& direction)
@@ -488,7 +514,7 @@ void Robo::run(const Vector3& direction)
 
 Segment Robo::segment() const
 {
-    Vector3 next_position(*(model_->position()));
+    Vector3 next_position(*(tree_->balance()));
     next_position.add(delta_next_position_);
     Vector3 to(next_position);
     to.add(Vector3(0.0, -1.0, 0.0));
@@ -499,7 +525,7 @@ std::vector< Segment > Robo::segments() const
 {
     std::vector< Segment > segments;
     segments.reserve(2);
-    Vector3 balance(*(model_->position()));
+    Vector3 balance(*(tree_->balance()));
     balance.add(delta_next_position_);
 
     Vector3 x0(balance);
@@ -526,9 +552,9 @@ std::vector< Segment > Robo::segments() const
 void Robo::set_model_angle_zx(double new_value)
 {
     angle_zx_ = new_value;
-    Vector3 angle(*model_->angle());
+    Vector3 angle(*tree_->angle());
     angle.y = new_value;
-    model_->angle(angle);
+    set_angle(tree_, collider_, angle);
 }
 
 void Robo::update(const Robo& opponent)
@@ -541,14 +567,14 @@ void Robo::update(const Robo& opponent)
 
 Sphere Robo::sphere() const
 {
-    Vector3 next_position(*(model_->position()));
+    Vector3 next_position(*(tree_->balance()));
     next_position.add(delta_next_position_);
     return Sphere(next_position, 1.0); // Cheating.  This is defined at json
 }
 
 void Robo::warp(const Vector3& to)
 {
-    model_->position(to);
+    set_balance(tree_, collider_, to);
 }
 
 void Robo::was_shot(double damage)
@@ -645,7 +671,7 @@ void Robo::set_delta_next_position()
 
     stop_if_too_small(&velocity_, force_);
 
-    const Vector3* balance = model_->position();
+    const Vector3* balance = tree_->balance();
 
     Vector3 drag(get_drag(velocity_));
     Vector3 friction;

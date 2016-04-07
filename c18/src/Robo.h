@@ -7,6 +7,8 @@
 
 namespace GameLib { class Texture; }
 namespace GraphicsDatabase { class Model; }
+namespace GraphicsDatabase { class Tree; }
+
 class Cuboid;
 class Segment;
 class Sphere;
@@ -14,6 +16,7 @@ class Triangle;
 class View;
 
 using GraphicsDatabase::Model;
+using GraphicsDatabase::Tree;
 using GraphicsDatabase::Vector3;
 
 class Robo
@@ -27,7 +30,8 @@ public:
 
 private:
     const std::string id_;
-    Model* model_;
+    Tree* tree_;
+    Model* collider_;
     Vector3 force_;
     Vector3 velocity_;
     Vector3 delta_next_position_;

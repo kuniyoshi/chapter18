@@ -42,7 +42,7 @@ public:
 Impl::Impl()
 {
     bullets_ = new Bullet[2 * MaxBulletPerRobo];
-    TheDatabase::instance().create("bullet", "bullet");
+    TheDatabase::instance().create_model("bullet", "bullet");
 }
 
 Impl::~Impl()

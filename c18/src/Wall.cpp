@@ -45,8 +45,8 @@ void make_triangles_from_model( std::vector< Triangle >* triangles,
 Wall::Wall(const std::string& id)
 : model_(0), triangles_()
 {
-    TheDatabase::instance().create(id, "wall");
-    model_ = TheDatabase::instance().find(id);
+    TheDatabase::instance().create_model(id, "rhombus");
+    model_ = TheDatabase::instance().find_model(id);
     make_triangles_from_model(&triangles_, *model_);
 }
 
