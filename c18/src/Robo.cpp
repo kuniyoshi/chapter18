@@ -395,7 +395,7 @@ double calc_half_theta_at_depth(double depth)
 double Robo::get_half_sight_size_at_depth(const Robo& opponent) const
 {
     Vector3 to_opponent_point(*opponent.center());
-    to_opponent_point.subtract(*center());
+    to_opponent_point.subtract(*view_->center());
     const double depth = to_opponent_point.length();
     const double theta = calc_half_theta_at_depth(depth);
     const double length_at_depth = depth * GameLib::tan(theta);
@@ -625,7 +625,7 @@ bool is_sighting(   const Vector3& self_point,
 
 void Robo::lock_on(const Robo& opponent)
 {
-    if (!is_sighting(*center(), *opponent.center(), -*view_->angle()))
+    if (!is_sighting(*view_->center(), *opponent.center(), -*view_->angle()))
     {
         is_locking_on_ = false;
         sighting_ms_ = 0;
