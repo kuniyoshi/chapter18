@@ -376,7 +376,7 @@ namespace
 // sighting
 const double MaxDepthCanLockOn      = 100.0;
 const double MinDepthCanLockOn      = 3.0;
-const double HalfThetaAtMaxDepth    = 1.0;
+const double HalfThetaAtMaxDepth    = 3.0;
 const double HalfHeightAtMaxDepth
 = MaxDepthCanLockOn * GameLib::tan(HalfThetaAtMaxDepth);
 const double HalfThetaAtMinDepth
