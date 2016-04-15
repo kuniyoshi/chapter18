@@ -68,7 +68,7 @@ void make_sure_globals_are()
     if (!g_wall)
     {
         g_wall = new Wall("wall");
-        g_wall->warp(Vector3(0.0, 1.2, -5.0));
+        g_wall->warp(Vector3(0.0, 1.2, -15.0));
     }
 }
 
@@ -96,6 +96,15 @@ void Framework::update()
     Vector3 move_direction;
 
     Pad pad(0);
+
+    if (pad.isTriggered(Pad::Option))
+    {
+        TheTime::instance().rate(TheTime::instance().rate() + 0.1);
+    }
+    else if (pad.isTriggered(Pad::Option2))
+    {
+        TheTime::instance().rate(TheTime::instance().rate() - 0.1);
+    }
 
     if (pad.isOn(Pad::LeftStickUp))
     {
@@ -192,8 +201,8 @@ void Framework::update()
     Ai::TheArmoury::instance().make_collision(g_opponent);
     Ai::TheArmoury::instance().make_collision(g_robo);
 
-    TheDebugOutput::print(*g_robo);
-    TheDebugOutput::print(*g_robo->view());
+    // TheDebugOutput::print(*g_robo);
+    // TheDebugOutput::print(*g_robo->view());
 
     TheEnvironment::tick();
 
